@@ -44,20 +44,9 @@ assert alsaSupport -> (alsa-lib != null);
 assert pulseaudioSupport -> (libpulseaudio != null);
 assert portaudioSupport -> (portaudio != null); let
   inherit (lib) optional;
+
   luajit52 = luajit.override {enable52Compat = true;};
-  vapoursynth = fetchFromGitHub {
-    owner = "vapoursynth";
-    repo = "vapoursynth";
-    rev = "R65";
-    hash = "sha256-6w7GSC5ZNIhLpulni4sKq0OvuxHlTJRilBFGH5PQW8U=";
-  };
-  AviSynthPlus = fetchFromGitHub {
-    owner = "AviSynth";
-    repo = "AviSynthPlus";
-    rev = "v3.7.3";
-    hash = "";
-    fetchSubmodules = true;
-  };
+
   bestsource = fetchFromGitHub {
     owner = "vapoursynth";
     repo = "bestsource";
@@ -65,10 +54,26 @@ assert portaudioSupport -> (portaudio != null); let
     hash = "sha256-9BnyRzF33otju3W503O18JuTyvp+hFxk6JMwrozKoZY=";
     fetchSubmodules = true;
   };
+
+  vapoursynth = fetchFromGitHub {
+    owner = "vapoursynth";
+    repo = "vapoursynth";
+    rev = "R65";
+    hash = "sha256-6w7GSC5ZNIhLpulni4sKq0OvuxHlTJRilBFGH5PQW8U=";
+  };
+
+  AviSynthPlus = fetchFromGitHub {
+    owner = "AviSynth";
+    repo = "AviSynthPlus";
+    rev = "v3.7.3";
+    hash = "";
+    fetchSubmodules = true;
+  };
   gtest = fetchurl {
     url = "https://github.com/google/googletest/archive/release-1.8.1.zip";
     hash = "sha256-kngnwYPQFzTMXP74Xg/z9akv/mGI4NGOkJxe/r8ooMc=";
   };
+
   gtest_patch = fetchurl {
     url = "https://wrapdb.mesonbuild.com/v1/projects/gtest/1.8.1/1/get_zip";
     hash = "sha256-959f1G4JUHs/LgmlHqbrIAIO/+VDM19a7lnzDMjRWAU=";
@@ -86,8 +91,7 @@ in
     };
 
     # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/video/aegisub/default.nix
-    # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=aegisub-arch1t3cht-git
-    # https://github.com/arch1t3cht/Aegisub/blob/feature/meson.build
+    # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=aegisub-arch1t3cht
     nativeBuildInputs = [
       meson
       ninja
@@ -130,56 +134,81 @@ in
       ./0001-bas-to-bs.patch
     ];
 
-    # https://github.com/arch1t3cht/Aegisub/blob/feature/meson_options.txt
-    # https://github.com/NixOS/nixpkgs/blob/8dab54e2b3c4d0c946e1a24cad6bf23e552b2b36/pkgs/development/libraries/gstreamer/ugly/default.nix#L68
-    # https://github.com/NixOS/nixpkgs/blob/8dab54e2b3c4d0c946e1a24cad6bf23e552b2b36/pkgs/servers/pulseaudio/default.nix#L96
-    mesonFlags = [
-      "--buildtype=release"
-      (lib.mesonEnable "alsa" false)
+    mesonFlags =
+      [
+        "--buildtype=release"
+        (lib.mesonBool "b_lto" false)
 
-      (lib.mesonBool "b_lto" false)
-      (lib.mesonEnable "openal" false)
-      (lib.mesonEnable "libpulse" true)
-      (lib.mesonEnable "portaudio" false)
-      (lib.mesonEnable "directsound" false)
-      (lib.mesonEnable "xaudio2" false)
+        (lib.mesonEnable "directsound" false)
+        (lib.mesonEnable "xaudio2" false)
 
-      (lib.mesonOption "default_audio_output" "PulseAudio")
+        (lib.mesonEnable "ffms2" true)
+        (lib.mesonEnable "avisynth" true)
+        (lib.mesonEnable "bestsource" true)
+        (lib.mesonEnable "vapoursynth" true)
 
-      (lib.mesonEnable "ffms2" true)
-      (lib.mesonEnable "avisynth" true)
-      (lib.mesonEnable "bestsource" true)
-      (lib.mesonEnable "vapoursynth" true)
+        (lib.mesonEnable "fftw3" true)
+        (lib.mesonEnable "uchardet" true)
+        (lib.mesonEnable "csri" true)
+      ]
+      ++ (
+        if alsaSupport
+        then [(lib.mesonEnable "alsa" true)]
+        else [
+          (lib.mesonEnable "alsa" false)
+          (lib.mesonOption "default_audio_output" "ALSA")
+        ]
+      )
+      ++ (
+        if openalSupport
+        then [(lib.mesonEnable "openal" true)]
+        else [
+          (lib.mesonEnable "openal" false)
+          (lib.mesonOption "default_audio_output" "OpenAL")
+        ]
+      )
+      ++ (
+        if pulseaudioSupport
+        then [(lib.mesonEnable "libpulse" true)]
+        else [
+          (lib.mesonEnable "libpulse" false)
+          (lib.mesonOption "default_audio_output" "PulseAudio")
+        ]
+      )
+      ++ (
+        if portaudioSupport
+        then [(lib.mesonEnable "portaudio" true)]
+        else [
+          (lib.mesonEnable "portaudio" false)
+          (lib.mesonOption "default_audio_output" "PortAudio")
+        ]
+      )
+      ++ (
+        if spellcheckSupport
+        then [(lib.mesonEnable "hunspell" true)]
+        else [(lib.mesonEnable "hunspell" false)]
+      );
 
-      (lib.mesonEnable "fftw3" true)
-      (lib.mesonEnable "hunspell" true)
-      (lib.mesonEnable "uchardet" true)
-      (lib.mesonEnable "csri" true)
-    ];
-
-    hardeningDisable = [
-      "bindnow"
-      "relro"
-    ];
     enableParallelBuilding = true;
 
     preConfigure = ''
-      cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
-      cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
-      cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
+        cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
+        cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
+        cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
 
-      mkdir subprojects/packagecache
-      cp -r --no-preserve=mode ${gtest} subprojects/packagecache/gtest-1.8.1.zip
-      cp -r --no-preserve=mode ${gtest_patch} subprojects/packagecache/gtest-1.8.1-1-wrap.zip
+        mkdir subprojects/packagecache
+        cp -r --no-preserve=mode ${gtest} subprojects/packagecache/gtest-1.8.1.zip
+        cp -r --no-preserve=mode ${gtest_patch} subprojects/packagecache/gtest-1.8.1-1-wrap.zip
 
-      meson subprojects packagefiles --apply bestsource
-      meson subprojects packagefiles --apply avisynth
-      meson subprojects packagefiles --apply vapoursynth
+        meson subprojects packagefiles --apply bestsource
+        meson subprojects packagefiles --apply avisynth
+        meson subprojects packagefiles --apply vapoursynth
 
+        mkdir -p build
+        echo """#define BUILD_GIT_VERSION_NUMBER 0
+      #define BUILD_GIT_VERSION_STRING \"$pkgver\"
+      """ > build/git_version.h
 
-      mkdir -p build
-      #echo "#define BUILD_GIT_VERSION_NUMBER 0" >> build/git_version.h
-      #echo "#define BUILD_GIT_VERSION_STRING feature_${version} >> build/git_version.h
     '';
 
     meta = with lib; {
