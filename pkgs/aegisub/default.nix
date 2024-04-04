@@ -81,7 +81,6 @@ assert portaudioSupport -> (portaudio != null); let
   };
 in
   stdenv.mkDerivation rec {
-    name = "aegisub";
     pname = "aegisub";
     version = full_version;
 

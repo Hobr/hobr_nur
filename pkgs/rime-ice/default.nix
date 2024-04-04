@@ -5,7 +5,6 @@
   ...
 }:
 stdenvNoCC.mkDerivation {
-  name = "rime-ice";
   pname = "rime-ice";
   version = "2024-03-24 12:44";
 
