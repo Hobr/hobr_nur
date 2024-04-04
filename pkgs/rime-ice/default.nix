@@ -5,8 +5,10 @@
   ...
 }:
 stdenvNoCC.mkDerivation {
+  name = "rime-ic";
   pname = "rime-ice";
   version = "2024-03-24 12:44";
+
   src = fetchFromGitHub {
     owner = "iDvel";
     repo = "rime-ice";
@@ -20,8 +22,8 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = with lib; {
-    description = "Rime 配置：雾凇拼音 | 长期维护的简体词库 ";
-    homepage = "https://dvel.me/posts/rime-ice/";
+    description = "Rime 配置：雾凇拼音 | 长期维护的简体词库";
+    homepage = "https://github.com/iDvel/rime-ice";
     license = licenses.gpl3;
     platforms = platforms.all;
   };

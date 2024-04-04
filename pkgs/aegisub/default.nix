@@ -81,9 +81,9 @@ assert portaudioSupport -> (portaudio != null); let
   };
 in
   stdenv.mkDerivation rec {
+    name = "aegisub";
     pname = "aegisub";
     version = full_version;
-    name = "${pname}-${version}";
 
     src = fetchFromGitHub {
       owner = "arch1t3cht";
