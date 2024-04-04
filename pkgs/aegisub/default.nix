@@ -187,14 +187,6 @@ in
     # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/video/aegisub/default.nix
     # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=aegisub-arch1t3cht
 
-    #[35/328] Generating src/libresrc/bitmap.{cpp,h} with a custom command
-    #FAILED: src/libresrc/bitmap.cpp src/libresrc/bitmap.h
-    #/build/source/tools/respack.py ../src/libresrc/../bitmaps/manifest.respack src/libresrc/bitmap.cpp src/libresrc/bitmap.h
-    #/bin/sh: /build/source/tools/respack.py: not found
-    #[36/328] Generating src/libresrc/default_config.{cpp,h} with a custom command
-    #FAILED: src/libresrc/default_config.cpp src/libresrc/default_config.h
-    #/build/source/tools/respack.py ../src/libresrc/manifest.respack src/libresrc/default_config.cpp src/libresrc/default_config.h
-    #/bin/sh: /build/source/tools/respack.py: not found
     preConfigure = ''
       cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
       cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
