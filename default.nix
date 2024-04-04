@@ -11,8 +11,7 @@
   modules = import ./modules; # NixOS modules
   overlays = import ./overlays; # nixpkgs overlays
 
-  #example-package = pkgs.callPackage ./pkgs/example-package { };
-  # aegisub = pkgs.callPackage ./pkgs/aegisub.nix {};
+  aegisub = pkgs.callPackage ./pkgs/aegisub.nix {};
   rime-ice = pkgs.callPackage ./pkgs/rime-ice.nix {};
   # some-qt5-package = pkgs.libsForQt5.callPackage ./pkgs/some-qt5-package { };
   # ...

@@ -26,6 +26,7 @@
   ffmpeg,
   jansson,
   libGL,
+  zlib,
   spellcheckSupport ? true,
   hunspell ? null,
   openalSupport ? false,
@@ -47,14 +48,14 @@ assert portaudioSupport -> (portaudio != null); let
   vapoursynth = fetchFromGitHub {
     owner = "vapoursynth";
     repo = "vapoursynth";
-    rev = "R59";
+    rev = "R65";
     hash = "sha256-6w7GSC5ZNIhLpulni4sKq0OvuxHlTJRilBFGH5PQW8U=";
   };
   AviSynthPlus = fetchFromGitHub {
     owner = "AviSynth";
     repo = "AviSynthPlus";
-    rev = "v3.7.2";
-    hash = "sha256-PNIrDRJNKWEBPEKlCq0nE6UW0prVswE6mW+Fi4ROTAc=";
+    rev = "v3.7.3";
+    hash = "";
     fetchSubmodules = true;
   };
   bestsource = fetchFromGitHub {
@@ -109,6 +110,7 @@ in
         ffmpeg
         jansson
         libGL
+        zlib
       ]
       ++ optional alsaSupport alsa-lib
       ++ optional openalSupport openal
@@ -122,6 +124,11 @@ in
       NIX_CFLAGS_COMPILE = "-I${luajit52}/include";
       NIX_CFLAGS_LINK = "-L${luajit52}/lib";
     };
+
+    # https://aur.archlinux.org/cgit/aur.git/tree/0001-bas-to-bs.patch?h=aegisub-arch1t3cht
+    patches = [
+      ./0001-bas-to-bs.patch
+    ];
 
     # https://github.com/arch1t3cht/Aegisub/blob/feature/meson_options.txt
     # https://github.com/NixOS/nixpkgs/blob/8dab54e2b3c4d0c946e1a24cad6bf23e552b2b36/pkgs/development/libraries/gstreamer/ugly/default.nix#L68
