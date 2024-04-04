@@ -83,6 +83,7 @@ in
   stdenv.mkDerivation rec {
     pname = "aegisub";
     version = full_version;
+    name = "${pname}-${version}";
 
     src = fetchFromGitHub {
       owner = "arch1t3cht";
