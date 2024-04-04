@@ -66,7 +66,7 @@ assert portaudioSupport -> (portaudio != null); let
     owner = "AviSynth";
     repo = "AviSynthPlus";
     rev = "v3.7.3";
-    hash = "";
+    hash = "sha256-sBxZ2J5sS/2wrL+tSxVAFPKNbg3c1iMSHRueRQAs5J4=";
     fetchSubmodules = true;
   };
   gtest = fetchurl {
@@ -90,8 +90,6 @@ in
       hash = "sha256-yEXDwne+wros0WjOwQbvMIXk0UXV5TOoV/72K12vi/c=";
     };
 
-    # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/video/aegisub/default.nix
-    # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=aegisub-arch1t3cht
     nativeBuildInputs = [
       meson
       ninja
@@ -130,15 +128,13 @@ in
     };
 
     # https://aur.archlinux.org/cgit/aur.git/tree/0001-bas-to-bs.patch?h=aegisub-arch1t3cht
-    patches = [
-      ./0001-bas-to-bs.patch
-    ];
+    patches = [./0001-bas-to-bs.patch];
 
     mesonFlags =
       [
         "--buildtype=release"
         (lib.mesonBool "b_lto" false)
-
+        (lib.mesonOption "default_audio_output" "auto")
         (lib.mesonEnable "directsound" false)
         (lib.mesonEnable "xaudio2" false)
 
@@ -154,18 +150,12 @@ in
       ++ (
         if alsaSupport
         then [(lib.mesonEnable "alsa" true)]
-        else [
-          (lib.mesonEnable "alsa" false)
-          (lib.mesonOption "default_audio_output" "ALSA")
-        ]
+        else [(lib.mesonEnable "alsa" false)]
       )
       ++ (
         if openalSupport
         then [(lib.mesonEnable "openal" true)]
-        else [
-          (lib.mesonEnable "openal" false)
-          (lib.mesonOption "default_audio_output" "OpenAL")
-        ]
+        else [(lib.mesonEnable "openal" false)]
       )
       ++ (
         if pulseaudioSupport
@@ -178,10 +168,7 @@ in
       ++ (
         if portaudioSupport
         then [(lib.mesonEnable "portaudio" true)]
-        else [
-          (lib.mesonEnable "portaudio" false)
-          (lib.mesonOption "default_audio_output" "PortAudio")
-        ]
+        else [(lib.mesonEnable "portaudio" false)]
       )
       ++ (
         if spellcheckSupport
@@ -191,6 +178,8 @@ in
 
     enableParallelBuilding = true;
 
+    # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/video/aegisub/default.nix
+    # https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=aegisub-arch1t3cht
     preConfigure = ''
         cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
         cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
@@ -208,7 +197,6 @@ in
         echo """#define BUILD_GIT_VERSION_NUMBER 0
       #define BUILD_GIT_VERSION_STRING \"$pkgver\"
       """ > build/git_version.h
-
     '';
 
     meta = with lib; {
