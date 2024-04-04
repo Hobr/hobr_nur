@@ -24,7 +24,7 @@
   ffms,
   fftw,
   libuchardet,
-  ffmpeg,
+  ffmpeg_4,
   jansson,
   libGL,
   zlib,
@@ -72,6 +72,7 @@ assert portaudioSupport -> (portaudio != null); let
     hash = "sha256-sBxZ2J5sS/2wrL+tSxVAFPKNbg3c1iMSHRueRQAs5J4=";
     fetchSubmodules = true;
   };
+
   gtest = fetchurl {
     url = "https://github.com/google/googletest/archive/release-1.8.1.zip";
     hash = "sha256-kngnwYPQFzTMXP74Xg/z9akv/mGI4NGOkJxe/r8ooMc=";
@@ -113,7 +114,7 @@ in
         ffms
         fftw
         libuchardet
-        ffmpeg
+        ffmpeg_4
         jansson
         libGL
         zlib
@@ -184,12 +185,16 @@ in
     enableParallelBuilding = true;
 
     # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/video/aegisub/default.nix
-    # https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=aegisub-arch1t3cht
+    # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=aegisub-arch1t3cht
 
-    # [33/328] Generating src/libresrc/bitmap.{cpp,h} with a custom command
-    # FAILED: src/libresrc/bitmap.cpp src/libresrc/bitmap.h
-    # /build/source/tools/respack.py ../src/libresrc/../bitmaps/manifest.respack src/libresrc/bitmap.cpp src/libresrc/bitmap.h
-    # /bin/sh: /build/source/tools/respack.py: not found
+    #[35/328] Generating src/libresrc/bitmap.{cpp,h} with a custom command
+    #FAILED: src/libresrc/bitmap.cpp src/libresrc/bitmap.h
+    #/build/source/tools/respack.py ../src/libresrc/../bitmaps/manifest.respack src/libresrc/bitmap.cpp src/libresrc/bitmap.h
+    #/bin/sh: /build/source/tools/respack.py: not found
+    #[36/328] Generating src/libresrc/default_config.{cpp,h} with a custom command
+    #FAILED: src/libresrc/default_config.cpp src/libresrc/default_config.h
+    #/build/source/tools/respack.py ../src/libresrc/manifest.respack src/libresrc/default_config.cpp src/libresrc/default_config.h
+    #/bin/sh: /build/source/tools/respack.py: not found
     preConfigure = ''
       cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
       cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
