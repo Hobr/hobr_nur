@@ -179,7 +179,6 @@ in
       description = "Cross-platform advanced subtitle editor, with new feature branches.";
       homepage = "https://github.com/arch1t3cht/Aegisub";
       license = licenses.bsd3;
-      maintainers = with maintainers; [tgoyne kblomster arch1t3cht];
       mainProgram = "aegisub";
       platforms = platforms.all;
     };
