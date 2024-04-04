@@ -47,6 +47,8 @@ assert portaudioSupport -> (portaudio != null); let
 
   luajit52 = luajit.override {enable52Compat = true;};
 
+  full_version = "feature_11";
+
   bestsource = fetchFromGitHub {
     owner = "vapoursynth";
     repo = "bestsource";
@@ -81,12 +83,12 @@ assert portaudioSupport -> (portaudio != null); let
 in
   stdenv.mkDerivation rec {
     pname = "aegisub";
-    version = "11";
+    version = full_version;
 
     src = fetchFromGitHub {
       owner = "arch1t3cht";
       repo = "Aegisub";
-      rev = "feature_${version}";
+      rev = full_version;
       hash = "sha256-yEXDwne+wros0WjOwQbvMIXk0UXV5TOoV/72K12vi/c=";
     };
 
@@ -127,8 +129,12 @@ in
       NIX_CFLAGS_LINK = "-L${luajit52}/lib";
     };
 
-    # https://aur.archlinux.org/cgit/aur.git/tree/0001-bas-to-bs.patch?h=aegisub-arch1t3cht
-    patches = [./0001-bas-to-bs.patch];
+    patches = [
+      # https://aur.archlinux.org/cgit/aur.git/tree/0001-bas-to-bs.patch?h=aegisub-arch1t3cht
+      ./0001-bas-to-bs.patch
+      # Fix git_version.h unable to generate
+      ./0002-remove-git-version.patch
+    ];
 
     mesonFlags =
       [
@@ -159,11 +165,8 @@ in
       )
       ++ (
         if pulseaudioSupport
-        then [(lib.mesonEnable "libpulse" true)]
-        else [
-          (lib.mesonEnable "libpulse" false)
-          (lib.mesonOption "default_audio_output" "PulseAudio")
-        ]
+        then [(lib.mesonEnable "libpulse" true) (lib.mesonOption "default_audio_output" "PulseAudio")]
+        else [(lib.mesonEnable "libpulse" false)]
       )
       ++ (
         if portaudioSupport
@@ -181,22 +184,20 @@ in
     # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/video/aegisub/default.nix
     # https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=aegisub-arch1t3cht
     preConfigure = ''
-        cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
-        cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
-        cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
+      cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
+      cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
+      cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
 
-        mkdir subprojects/packagecache
-        cp -r --no-preserve=mode ${gtest} subprojects/packagecache/gtest-1.8.1.zip
-        cp -r --no-preserve=mode ${gtest_patch} subprojects/packagecache/gtest-1.8.1-1-wrap.zip
+      mkdir subprojects/packagecache
+      cp -r --no-preserve=mode ${gtest} subprojects/packagecache/gtest-1.8.1.zip
+      cp -r --no-preserve=mode ${gtest_patch} subprojects/packagecache/gtest-1.8.1-1-wrap.zip
 
-        meson subprojects packagefiles --apply bestsource
-        meson subprojects packagefiles --apply avisynth
-        meson subprojects packagefiles --apply vapoursynth
+      meson subprojects packagefiles --apply bestsource
+      meson subprojects packagefiles --apply avisynth
+      meson subprojects packagefiles --apply vapoursynth
 
-        mkdir -p build
-        echo """#define BUILD_GIT_VERSION_NUMBER 0
-      #define BUILD_GIT_VERSION_STRING \"$pkgver\"
-      """ > build/git_version.h
+      mkdir -p build
+      echo """#define BUILD_GIT_VERSION_NUMBER 0\n#define BUILD_GIT_VERSION_STRING \"${full_version}\"""" > build/git_version.h
     '';
 
     meta = with lib; {
