@@ -1,7 +1,3 @@
-# [1/327] Generating git_version.h with a custom command
-# FAILED: git_version.h
-# /build/source/tools/version.sh /build/source/build /build/source
-# git repo not found and no cached git_version.h
 {
   lib,
   config,
@@ -28,6 +24,7 @@
   jansson,
   libGL,
   zlib,
+  libX11,
   spellcheckSupport ? true,
   hunspell ? null,
   openalSupport ? false,
@@ -118,6 +115,7 @@ in
         jansson
         libGL
         zlib
+        libX11
       ]
       ++ optional alsaSupport alsa-lib
       ++ optional openalSupport openal
@@ -138,6 +136,7 @@ in
       # Fix git_version.h unable to generate
       ./0002-remove-git-version.patch
       # Fix meson unable exec python respack
+      # https://github.com/arch1t3cht/Aegisub/pull/121
       ./0003-respack-unable-run.patch
     ];
 
@@ -188,14 +187,6 @@ in
 
     # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/video/aegisub/default.nix
     # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=aegisub-arch1t3cht
-    # [35/328] Generating src/libresrc/bitmap.{cpp,h} with a custom command
-    # FAILED: src/libresrc/bitmap.cpp src/libresrc/bitmap.h
-    # /build/source/tools/respack.py ../src/libresrc/../bitmaps/manifest.respack src/libresrc/bitmap.cpp src/libresrc/bitmap.h
-    # /bin/sh: /build/source/tools/respack.py: not found
-    # [36/328] Generating src/libresrc/default_config.{cpp,h} with a custom command
-    # FAILED: src/libresrc/default_config.cpp src/libresrc/default_config.h
-    # /build/source/tools/respack.py ../src/libresrc/manifest.respack src/libresrc/default_config.cpp src/libresrc/default_config.h
-    # /bin/sh: /build/source/tools/respack.py: not found
     preConfigure = ''
       cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
       cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
@@ -210,7 +201,8 @@ in
       meson subprojects packagefiles --apply vapoursynth
 
       mkdir -p build
-      echo """#define BUILD_GIT_VERSION_NUMBER 0\n#define BUILD_GIT_VERSION_STRING \"${full_version}\"""" > build/git_version.h
+      echo "#define BUILD_GIT_VERSION_NUMBER 0" > build/git_version.h
+      echo """#define BUILD_GIT_VERSION_STRING \"${full_version}\"""" >> build/git_version.h
     '';
 
     meta = with lib; {
