@@ -14,6 +14,7 @@
   pkg-config,
   luajit,
   gettext,
+  python,
   wrapGAppsHook,
   fontconfig,
   libass,
@@ -99,6 +100,7 @@ in
       pkg-config
       luajit52
       gettext
+      python
     ];
 
     buildInputs =
@@ -183,6 +185,11 @@ in
 
     # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/video/aegisub/default.nix
     # https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=aegisub-arch1t3cht
+
+    # [33/328] Generating src/libresrc/bitmap.{cpp,h} with a custom command
+    # FAILED: src/libresrc/bitmap.cpp src/libresrc/bitmap.h
+    # /build/source/tools/respack.py ../src/libresrc/../bitmaps/manifest.respack src/libresrc/bitmap.cpp src/libresrc/bitmap.h
+    # /bin/sh: /build/source/tools/respack.py: not found
     preConfigure = ''
       cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
       cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
