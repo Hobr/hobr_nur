@@ -1,10 +1,42 @@
-{ lib, config, stdenv, fetchFromGitHub, fetchurl, meson, ninja, cmake
-, pkg-config, luajit, gettext, python3, wrapGAppsHook, fontconfig, libass, boost
-, wxGTK32, icu, ffms, fftw, libuchardet, ffmpeg_4, jansson, libGL, zlib, libX11
-, spellcheckSupport ? true, hunspell ? null, openalSupport ? false
-, openal ? null, alsaSupport ? stdenv.isLinux, alsa-lib ? null
-, pulseaudioSupport ? config.pulseaudio or stdenv.isLinux, libpulseaudio ? null
-, portaudioSupport ? false, portaudio ? null, darwin, }:
+{ lib
+, config
+, stdenv
+, fetchFromGitHub
+, fetchurl
+, fetchpatch
+, meson
+, ninja
+, cmake
+, pkg-config
+, luajit
+, gettext
+, python3
+, wrapGAppsHook
+, fontconfig
+, libass
+, boost
+, wxGTK32
+, icu
+, ffms
+, fftw
+, libuchardet
+, ffmpeg_4
+, jansson
+, libGL
+, zlib
+, libX11
+, spellcheckSupport ? true
+, hunspell ? null
+, openalSupport ? false
+, openal ? null
+, alsaSupport ? stdenv.isLinux
+, alsa-lib ? null
+, pulseaudioSupport ? config.pulseaudio or stdenv.isLinux
+, libpulseaudio ? null
+, portaudioSupport ? false
+, portaudio ? null
+, darwin,
+}:
 assert spellcheckSupport -> (hunspell != null);
 assert openalSupport -> (openal != null);
 assert alsaSupport -> (alsa-lib != null);
@@ -99,12 +131,15 @@ in stdenv.mkDerivation rec {
   };
 
   patches = [
-    # https://aur.archlinux.org/cgit/aur.git/tree/0001-bas-to-bs.patch?h=aegisub-arch1t3cht
-    ./0001-bas-to-bs.patch
+    (fetchpatch {
+      name = "0001-bas-to-bs.patch";
+      url =
+        "https://aur.archlinux.org/cgit/aur.git/plain/0001-bas-to-bs.patch?h=aegisub-arch1t3cht&id=bbbea73953858fc7bf2775a0fb92cec49afb586c";
+      hash = "sha256-T0Msa8rpE3Qo++Tq6J/xdsDX9f1vVIj/b9rR/iuIGK4=";
+    })
     # Fix git_version.h unable to generate
     ./0002-remove-git-version.patch
     # Fix meson unable exec python respack
-    # https://github.com/arch1t3cht/Aegisub/pull/121
     ./0003-respack-unable-run.patch
   ];
 
@@ -149,6 +184,12 @@ in stdenv.mkDerivation rec {
   meta = with lib; {
     description =
       "Cross-platform advanced subtitle editor, with new feature branches.";
+    longDescription = ''
+      Aegisub is a free, cross-platform open source tool for creating and
+      modifying subtitles. Aegisub makes it quick and easy to time subtitles to
+      audio, and features many powerful tools for styling them, including a
+      built-in real-time video preview.
+    '';
     homepage = "https://github.com/arch1t3cht/Aegisub";
     license = licenses.bsd3;
     platforms = platforms.unix;
