@@ -113,7 +113,7 @@ in stdenv.mkDerivation (finalAttrs: {
         "https://aur.archlinux.org/cgit/aur.git/plain/0001-bas-to-bs.patch?h=aegisub-arch1t3cht&id=bbbea73953858fc7bf2775a0fb92cec49afb586c";
       hash = "sha256-T0Msa8rpE3Qo++Tq6J/xdsDX9f1vVIj/b9rR/iuIGK4=";
     })
-    # Fix git_version.h unable to generate
+    # Fix unable to generate git_version.h
     ./0002-remove-git-version.patch
     # Fix meson unable exec python respack
     ./0003-respack-unable-run.patch
@@ -124,9 +124,9 @@ in stdenv.mkDerivation (finalAttrs: {
     BOOST_LIBRARYDIR = "${lib.getLib boost}/lib";
   };
 
+  mesonBuildType = "release";
+
   mesonFlags = [
-    "--buildtype=release"
-    (lib.mesonBool "b_lto" false)
     (lib.mesonOption "default_audio_output" "auto")
     (lib.mesonEnable "alsa" alsaSupport)
     (lib.mesonEnable "openal" openalSupport)
@@ -144,6 +144,12 @@ in stdenv.mkDerivation (finalAttrs: {
     (lib.mesonEnable "uchardet" true)
     (lib.mesonEnable "csri" true)
     (lib.mesonEnable "hunspell" spellcheckSupport)
+  ] ++ lib.optionals stdenv.isDarwin [
+    # Follow https://github.com/arch1t3cht/Aegisub/blob/feature_11/.github/workflows/ci.yml
+    "--force-fallback-for=ffms2"
+    (lib.mesonOption "default_library" "static")
+    (lib.mesonBool "build_osx_bundle" true)
+    (lib.mesonBool "local_boost" true)
   ];
 
   preConfigure = ''
