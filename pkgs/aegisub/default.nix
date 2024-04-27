@@ -57,14 +57,6 @@ let
     fetchSubmodules = true;
   };
 
-  vapoursynth = fetchFromGitHub {
-    owner = "vapoursynth";
-    repo = "vapoursynth";
-    rev = "R59";
-    hash = "sha256-6w7GSC5ZNIhLpulni4sKq0OvuxHlTJRilBFGH5PQW8U=";
-    fetchSubmodules = true;
-  };
-
   gtest = fetchurl {
     url = "https://github.com/google/googletest/archive/release-1.8.1.zip";
     hash = "sha256-kngnwYPQFzTMXP74Xg/z9akv/mGI4NGOkJxe/r8ooMc=";
@@ -73,6 +65,14 @@ let
   gtest_patch = fetchurl {
     url = "https://wrapdb.mesonbuild.com/v1/projects/gtest/1.8.1/1/get_zip";
     hash = "sha256-959f1G4JUHs/LgmlHqbrIAIO/+VDM19a7lnzDMjRWAU=";
+  };
+
+  vapoursynth = fetchFromGitHub {
+    owner = "vapoursynth";
+    repo = "vapoursynth";
+    rev = "R59";
+    hash = "sha256-6w7GSC5ZNIhLpulni4sKq0OvuxHlTJRilBFGH5PQW8U=";
+    fetchSubmodules = true;
   };
 
 in stdenv.mkDerivation (finalAttrs: {
