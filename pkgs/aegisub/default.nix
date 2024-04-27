@@ -135,8 +135,8 @@ in stdenv.mkDerivation (finalAttrs: {
     ./0002-remove-git-version.patch
     # Fix meson unable exec python respack
     ./0003-respack-unable-run.patch
-    # Fix avisynth_wrap mutex build error
-    ./0003-avisynth_wrap-mutex.patch
+    # Fix avisynth_wrap build error on MacOS
+    ./0004-avisynth_wrap-mutex.patch
   ];
 
   mesonBuildType = "release";
