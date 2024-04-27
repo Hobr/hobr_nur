@@ -167,8 +167,7 @@ in stdenv.mkDerivation (finalAttrs: {
     (lib.mesonEnable "uchardet" true)
     (lib.mesonEnable "csri" true)
     (lib.mesonEnable "hunspell" spellcheckSupport)
-  ] ++ lib.optionals stdenv.isDarwin
-    [ (lib.mesonBool "build_osx_bundle" true) ];
+  ];
 
   preConfigure = ''
     cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
