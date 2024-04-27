@@ -15,6 +15,7 @@ llvmPackages_15, darwin }:
 
 let
   # Fix https://github.com/boostorg/mpl/issues/69
+  # -Wenum-constexpr-conversion
   inherit (llvmPackages_15) stdenv;
 
   inherit (darwin.apple_sdk.frameworks)
@@ -26,20 +27,6 @@ let
   };
 
   # from subprojects folder
-  bestsource = fetchFromGitHub {
-    owner = "vapoursynth";
-    repo = "bestsource";
-    rev = "ba1249c1f5443be6d0ec2be32490af5bbc96bf99";
-    hash = "sha256-9BnyRzF33otju3W503O18JuTyvp+hFxk6JMwrozKoZY=";
-  };
-
-  vapoursynth = fetchFromGitHub {
-    owner = "vapoursynth";
-    repo = "vapoursynth";
-    rev = "R59";
-    hash = "sha256-6w7GSC5ZNIhLpulni4sKq0OvuxHlTJRilBFGH5PQW8U=";
-  };
-
   AviSynthPlus = fetchFromGitHub {
     owner = "AviSynth";
     repo = "AviSynthPlus";
@@ -48,17 +35,24 @@ let
     fetchSubmodules = true;
   };
 
-  ffms2 = fetchFromGitHub {
-    owner = "arch1t3cht";
-    repo = "ffms2";
-    rev = "f463e4cae01e57f130742ebc7594a926da9d7261";
-    hash = "sha256-wt6FMQC57FMHHed+tJ2w+b/x/tswfmRM3WRBBKyufHg=";
+  bestsource = fetchFromGitHub {
+    owner = "vapoursynth";
+    repo = "bestsource";
+    rev = "ba1249c1f5443be6d0ec2be32490af5bbc96bf99";
+    hash = "sha256-9BnyRzF33otju3W503O18JuTyvp+hFxk6JMwrozKoZY=";
   };
 
   boost = fetchurl {
     url =
       "https://boostorg.jfrog.io/artifactory/main/release/1.74.0/source/boost_1_74_0.tar.gz";
     hash = "sha256-r/8205KIUSC8rAeRSMF30fb3cw7D1HIzqlGwr6TblKU=";
+  };
+
+  ffms2 = fetchFromGitHub {
+    owner = "arch1t3cht";
+    repo = "ffms2";
+    rev = "f463e4cae01e57f130742ebc7594a926da9d7261";
+    hash = "sha256-wt6FMQC57FMHHed+tJ2w+b/x/tswfmRM3WRBBKyufHg=";
   };
 
   gtest = fetchurl {
@@ -70,6 +64,14 @@ let
     url = "https://wrapdb.mesonbuild.com/v1/projects/gtest/1.8.1/1/get_zip";
     hash = "sha256-959f1G4JUHs/LgmlHqbrIAIO/+VDM19a7lnzDMjRWAU=";
   };
+
+  vapoursynth = fetchFromGitHub {
+    owner = "vapoursynth";
+    repo = "vapoursynth";
+    rev = "R59";
+    hash = "sha256-6w7GSC5ZNIhLpulni4sKq0OvuxHlTJRilBFGH5PQW8U=";
+  };
+
 in stdenv.mkDerivation (finalAttrs: {
   pname = "aegisub";
   version = "11";
@@ -164,20 +166,21 @@ in stdenv.mkDerivation (finalAttrs: {
     [ (lib.mesonBool "build_osx_bundle" true) ];
 
   preConfigure = ''
-    cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
     cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
-    cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
     cp -r --no-preserve=mode ${ffms2} subprojects/ffms2
+    cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
+    cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
+    sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
 
     mkdir subprojects/packagecache
     cp -r --no-preserve=mode ${gtest} subprojects/packagecache/gtest-1.8.1.zip
     cp -r --no-preserve=mode ${gtest_patch} subprojects/packagecache/gtest-1.8.1-1-wrap.zip
     cp -r --no-preserve=mode ${boost} subprojects/packagecache/boost_1_74_0.tar.gz
 
-    meson subprojects packagefiles --apply bestsource
     meson subprojects packagefiles --apply avisynth
-    meson subprojects packagefiles --apply vapoursynth
+    meson subprojects packagefiles --apply bestsource
     meson subprojects packagefiles --apply ffms2
+    meson subprojects packagefiles --apply vapoursynth
   '';
 
   meta = {
