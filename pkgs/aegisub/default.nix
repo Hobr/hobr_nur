@@ -61,7 +61,7 @@ let
     OpenAL
     QuartzCore;
 
-  luajit = luajit.override { enable52Compat = true; };
+  lua = luajit.override { enable52Compat = true; };
 
   # from subprojects folder
   bestsource = fetchFromGitHub {
@@ -122,7 +122,7 @@ stdenv.mkDerivation (finalAttrs: {
   nativeBuildInputs = [
     meson
     cmake
-    luajit
+    lua
     ninja
     pkg-config
     intltool
