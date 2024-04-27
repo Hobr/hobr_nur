@@ -132,6 +132,10 @@ in stdenv.mkDerivation (finalAttrs: {
     ./0003-respack-unable-run.patch
   ];
 
+  # Fix https://github.com/boostorg/mpl/issues/69
+  env.NIX_CFLAGS_COMPILE = toString
+    (lib.optionals stdenv.cc.isClang [ "-Wenum-constexpr-conversion" ]);
+
   mesonBuildType = "release";
   dontUseCmakeConfigure = true;
 
