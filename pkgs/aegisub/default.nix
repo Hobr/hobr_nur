@@ -4,7 +4,7 @@ meson, cmake, luajit, ninja, pkg-config, intltool, python3, gettext,
 
 dav1d, expat, ffmpeg, fftw, freetype, fontconfig, fribidi, harfbuzz, icu
 , jansson, libass, libGL, libGLU, libiconv, libpng, libuchardet, libX11, nasm
-, wxGTK32, zlib,
+, wxGTK31, zlib,
 
 alsaSupport ? stdenv.isLinux, alsa-lib, openalSupport ? true, openal
 , portaudioSupport ? false, portaudio
@@ -40,6 +40,7 @@ let
     repo = "bestsource";
     rev = "ba1249c1f5443be6d0ec2be32490af5bbc96bf99";
     hash = "sha256-9BnyRzF33otju3W503O18JuTyvp+hFxk6JMwrozKoZY=";
+    fetchSubmodules = true;
   };
 
   boost = fetchurl {
@@ -53,6 +54,15 @@ let
     repo = "ffms2";
     rev = "f463e4cae01e57f130742ebc7594a926da9d7261";
     hash = "sha256-wt6FMQC57FMHHed+tJ2w+b/x/tswfmRM3WRBBKyufHg=";
+    fetchSubmodules = true;
+  };
+
+  vapoursynth = fetchFromGitHub {
+    owner = "vapoursynth";
+    repo = "vapoursynth";
+    rev = "R59";
+    hash = "sha256-6w7GSC5ZNIhLpulni4sKq0OvuxHlTJRilBFGH5PQW8U=";
+    fetchSubmodules = true;
   };
 
   gtest = fetchurl {
@@ -63,13 +73,6 @@ let
   gtest_patch = fetchurl {
     url = "https://wrapdb.mesonbuild.com/v1/projects/gtest/1.8.1/1/get_zip";
     hash = "sha256-959f1G4JUHs/LgmlHqbrIAIO/+VDM19a7lnzDMjRWAU=";
-  };
-
-  vapoursynth = fetchFromGitHub {
-    owner = "vapoursynth";
-    repo = "vapoursynth";
-    rev = "R59";
-    hash = "sha256-6w7GSC5ZNIhLpulni4sKq0OvuxHlTJRilBFGH5PQW8U=";
   };
 
 in stdenv.mkDerivation (finalAttrs: {
@@ -105,7 +108,7 @@ in stdenv.mkDerivation (finalAttrs: {
     libuchardet
     libX11
     nasm
-    wxGTK32
+    wxGTK31
     zlib
   ] ++ lib.optionals alsaSupport [ alsa-lib ]
     ++ lib.optionals openalSupport [ openal ]
