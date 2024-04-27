@@ -17,7 +17,10 @@ let
   inherit (darwin.apple_sdk.frameworks)
     AppKit Carbon Cocoa CoreFoundation CoreText IOKit OpenAL QuartzCore;
 
-  lua = luajit.override { enable52Compat = true; };
+  lua = luajit.override {
+    enable52Compat = true;
+    packageOverrides = ps: with ps; [ luafilesystem moonscript ];
+  };
 
   # from subprojects folder
   bestsource = fetchFromGitHub {
