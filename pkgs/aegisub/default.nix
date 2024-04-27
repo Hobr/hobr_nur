@@ -1,65 +1,21 @@
-{
-  lib,
-  config,
-  stdenv,
-  fetchFromGitHub,
-  fetchurl,
-  fetchpatch,
+{ lib, config, stdenv, fetchFromGitHub, fetchurl, fetchpatch,
 
-  meson,
-  cmake,
-  luajit,
-  ninja,
-  pkg-config,
-  intltool,
-  python3,
-  gettext,
+meson, cmake, luajit, ninja, pkg-config, intltool, python3, gettext,
 
-  dav1d,
-  expat,
-  ffmpeg,
-  fftw,
-  freetype,
-  fontconfig,
-  fribidi,
-  harfbuzz,
-  icu,
-  jansson,
-  libass,
-  libGL,
-  libGLU,
-  libiconv,
-  libpng,
-  libuchardet,
-  libX11,
-  nasm,
-  wxGTK32,
-  zlib,
+dav1d, expat, ffmpeg, fftw, freetype, fontconfig, fribidi, harfbuzz, icu
+, jansson, libass, libGL, libGLU, libiconv, libpng, libuchardet, libX11, nasm
+, wxGTK32, zlib,
 
-  alsaSupport ? stdenv.isLinux,
-  alsa-lib,
-  openalSupport ? true,
-  openal,
-  portaudioSupport ? false,
-  portaudio,
-  pulseaudioSupport ? config.pulseaudio or stdenv.isLinux,
-  libpulseaudio,
-  spellcheckSupport ? true,
-  hunspell,
+alsaSupport ? stdenv.isLinux, alsa-lib, openalSupport ? true, openal
+, portaudioSupport ? false, portaudio
+, pulseaudioSupport ? config.pulseaudio or stdenv.isLinux, libpulseaudio
+, spellcheckSupport ? true, hunspell,
 
-  darwin
-}:
+darwin }:
 
 let
   inherit (darwin.apple_sdk.frameworks)
-    AppKit
-    Carbon
-    Cocoa
-    CoreFoundation
-    CoreText
-    IOKit
-    OpenAL
-    QuartzCore;
+    AppKit Carbon Cocoa CoreFoundation CoreText IOKit OpenAL QuartzCore;
 
   lua = luajit.override { enable52Compat = true; };
 
@@ -94,7 +50,8 @@ let
   };
 
   boost = fetchurl {
-    url = "https://boostorg.jfrog.io/artifactory/main/release/1.74.0/source/boost_1_74_0.tar.gz";
+    url =
+      "https://boostorg.jfrog.io/artifactory/main/release/1.74.0/source/boost_1_74_0.tar.gz";
     hash = "sha256-r/8205KIUSC8rAeRSMF30fb3cw7D1HIzqlGwr6TblKU=";
   };
 
@@ -107,8 +64,7 @@ let
     url = "https://wrapdb.mesonbuild.com/v1/projects/gtest/1.8.1/1/get_zip";
     hash = "sha256-959f1G4JUHs/LgmlHqbrIAIO/+VDM19a7lnzDMjRWAU=";
   };
-in
-stdenv.mkDerivation (finalAttrs: {
+in stdenv.mkDerivation (finalAttrs: {
   pname = "aegisub";
   version = "11";
 
@@ -119,16 +75,8 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-yEXDwne+wros0WjOwQbvMIXk0UXV5TOoV/72K12vi/c=";
   };
 
-  nativeBuildInputs = [
-    meson
-    cmake
-    lua
-    ninja
-    pkg-config
-    intltool
-    python3
-    gettext
-  ];
+  nativeBuildInputs =
+    [ meson cmake lua ninja pkg-config intltool python3 gettext ];
 
   buildInputs = [
     dav1d
@@ -151,22 +99,21 @@ stdenv.mkDerivation (finalAttrs: {
     nasm
     wxGTK32
     zlib
-  ]
-  ++ lib.optionals alsaSupport [ alsa-lib ]
-  ++ lib.optionals openalSupport [ openal ]
-  ++ lib.optionals portaudioSupport [ portaudio ]
-  ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
-  ++ lib.optionals spellcheckSupport [ hunspell ]
-  ++ lib.optionals stdenv.isDarwin [
-    AppKit
-    Carbon
-    Cocoa
-    CoreFoundation
-    CoreText
-    IOKit
-    OpenAL
-    QuartzCore
-  ];
+  ] ++ lib.optionals alsaSupport [ alsa-lib ]
+    ++ lib.optionals openalSupport [ openal ]
+    ++ lib.optionals portaudioSupport [ portaudio ]
+    ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
+    ++ lib.optionals spellcheckSupport [ hunspell ]
+    ++ lib.optionals stdenv.isDarwin [
+      AppKit
+      Carbon
+      Cocoa
+      CoreFoundation
+      CoreText
+      IOKit
+      OpenAL
+      QuartzCore
+    ];
 
   patches = [
     # Replace bestaudiosource with bestscore
@@ -207,8 +154,8 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.mesonEnable "uchardet" true)
     (lib.mesonEnable "csri" true)
     (lib.mesonEnable "hunspell" spellcheckSupport)
-  ]
-  ++ lib.optionals stdenv.isDarwin [ (lib.mesonBool "build_osx_bundle" true) ];
+  ] ++ lib.optionals stdenv.isDarwin
+    [ (lib.mesonBool "build_osx_bundle" true) ];
 
   preConfigure = ''
     cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
@@ -238,9 +185,7 @@ stdenv.mkDerivation (finalAttrs: {
     '';
     # The Aegisub sources are itself BSD/ISC, but they are linked against GPL'd
     # softwares - so the resulting program will be GPL
-    license = with lib.licenses; [
-      bsd3
-    ];
+    license = with lib.licenses; [ bsd3 ];
     mainProgram = "aegisub";
     platforms = lib.platforms.unix;
   };
