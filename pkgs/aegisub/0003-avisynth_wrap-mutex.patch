@@ -1,0 +1,29 @@
+diff --git a/src/avisynth_wrap.h b/src/avisynth_wrap.h
+index ece6fac63..eec0c2525 100644
+--- a/src/avisynth_wrap.h
++++ b/src/avisynth_wrap.h
+@@ -35,18 +35,18 @@
+ #ifdef WITH_AVISYNTH
+ 
+ #include <libaegisub/exception.h>
++#include <mutex>
+ 
+ class IScriptEnvironment;
+-namespace std { class mutex; }
+ 
+ class AviSynthWrapper {
+-	AviSynthWrapper(AviSynthWrapper const&);
++    AviSynthWrapper(AviSynthWrapper const&);
+ public:
+-	std::mutex& GetMutex() const;
+-	IScriptEnvironment *GetEnv() const;
++    std::mutex& GetMutex() const;
++    IScriptEnvironment *GetEnv() const;
+ 
+-	AviSynthWrapper();
+-	~AviSynthWrapper();
++    AviSynthWrapper();
++    ~AviSynthWrapper();
+ };
+ 
+ #endif
