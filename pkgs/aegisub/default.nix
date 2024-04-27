@@ -14,6 +14,14 @@ alsaSupport ? stdenv.isLinux, alsa-lib, openalSupport ? true, openal
 darwin }:
 
 let
+  # Fix https://github.com/boostorg/mpl/issues/69
+  stdenv = let
+    stdenv' = if stdenv.cc.isClang then
+      overrideLibcxx llvmPackages_15.stdenv
+    else
+      stdenv;
+
+  in if stdenv'.isDarwin then overrideSDK stdenv' "11.0" else stdenv';
   inherit (darwin.apple_sdk.frameworks)
     AppKit Carbon Cocoa CoreFoundation CoreText IOKit OpenAL QuartzCore;
 
@@ -131,10 +139,6 @@ in stdenv.mkDerivation (finalAttrs: {
     # Fix meson unable exec python respack
     ./0003-respack-unable-run.patch
   ];
-
-  # Fix https://github.com/boostorg/mpl/issues/69
-  env.NIX_CFLAGS_COMPILE = toString
-    (lib.optionals stdenv.cc.isClang [ "-Wenum-constexpr-conversion" ]);
 
   mesonBuildType = "release";
   dontUseCmakeConfigure = true;
