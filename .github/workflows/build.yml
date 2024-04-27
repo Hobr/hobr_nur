@@ -22,7 +22,7 @@ jobs:
           - nixpkgs=channel:nixos-unstable
           - nixpkgs=channel:nixpkgs-unstable
           - nixpkgs=channel:nixos-23.11
-    runs-on: [ubuntu-latest, macos-latest]
+    runs-on: [ubuntu-latest, macos-12]
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
