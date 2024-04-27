@@ -1,25 +1,69 @@
-{ lib, config, stdenv, fetchFromGitHub, fetchurl, fetchpatch,
+{
+  lib,
+  config,
+  stdenv,
+  fetchFromGitHub,
+  fetchurl,
+  fetchpatch,
 
-meson, cmake, luajit, ninja, pkg-config, intltool, python3, gettext,
+  meson,
+  cmake,
+  luajit,
+  ninja,
+  pkg-config,
+  intltool,
+  python3,
+  gettext,
 
-dav1d, expat, ffmpeg, fftw, freetype, fontconfig, fribidi, harfbuzz, icu
-, jansson, libass, libGL, libGLU, libiconv, libpng, libuchardet, libX11, nasm
-, wxGTK31, zlib,
+  dav1d,
+  expat,
+  ffmpeg,
+  fftw,
+  freetype,
+  fontconfig,
+  fribidi,
+  harfbuzz,
+  icu,
+  jansson,
+  libass,
+  libGL,
+  libGLU,
+  libiconv,
+  libpng,
+  libuchardet,
+  libX11,
+  nasm,
+  wxGTK31,
+  zlib,
 
-alsaSupport ? stdenv.isLinux, alsa-lib, openalSupport ? true, openal
-, portaudioSupport ? false, portaudio
-, pulseaudioSupport ? config.pulseaudio or stdenv.isLinux, libpulseaudio
-, spellcheckSupport ? true, hunspell,
+  alsaSupport ? stdenv.isLinux,
+  alsa-lib,
+  openalSupport ? true,
+  openal,
+  portaudioSupport ? false,
+  portaudio,
+  pulseaudioSupport ? config.pulseaudio or stdenv.isLinux,
+  libpulseaudio,
+  spellcheckSupport ? true,
+  hunspell,
 
-llvmPackages_15, darwin }:
+  llvmPackages_15,
+  darwin
+}:
 
 let
   # Fix https://github.com/boostorg/mpl/issues/69
-  # -Wenum-constexpr-conversion
   inherit (llvmPackages_15) stdenv;
 
   inherit (darwin.apple_sdk.frameworks)
-    AppKit Carbon Cocoa CoreFoundation CoreText IOKit OpenAL QuartzCore;
+    AppKit
+    Carbon
+    Cocoa
+    CoreFoundation
+    CoreText
+    IOKit
+    OpenAL
+    QuartzCore;
 
   lua = luajit.override {
     enable52Compat = true;
@@ -27,14 +71,6 @@ let
   };
 
   # from subprojects folder
-  AviSynthPlus = fetchFromGitHub {
-    owner = "AviSynth";
-    repo = "AviSynthPlus";
-    rev = "v3.7.2";
-    hash = "sha256-PNIrDRJNKWEBPEKlCq0nE6UW0prVswE6mW+Fi4ROTAc=";
-    fetchSubmodules = true;
-  };
-
   bestsource = fetchFromGitHub {
     owner = "vapoursynth";
     repo = "bestsource";
@@ -43,10 +79,20 @@ let
     fetchSubmodules = true;
   };
 
-  boost = fetchurl {
-    url =
-      "https://boostorg.jfrog.io/artifactory/main/release/1.74.0/source/boost_1_74_0.tar.gz";
-    hash = "sha256-r/8205KIUSC8rAeRSMF30fb3cw7D1HIzqlGwr6TblKU=";
+  vapoursynth = fetchFromGitHub {
+    owner = "vapoursynth";
+    repo = "vapoursynth";
+    rev = "R59";
+    hash = "sha256-6w7GSC5ZNIhLpulni4sKq0OvuxHlTJRilBFGH5PQW8U=";
+    fetchSubmodules = true;
+  };
+
+  AviSynthPlus = fetchFromGitHub {
+    owner = "AviSynth";
+    repo = "AviSynthPlus";
+    rev = "v3.7.2";
+    hash = "sha256-PNIrDRJNKWEBPEKlCq0nE6UW0prVswE6mW+Fi4ROTAc=";
+    fetchSubmodules = true;
   };
 
   ffms2 = fetchFromGitHub {
@@ -55,6 +101,11 @@ let
     rev = "f463e4cae01e57f130742ebc7594a926da9d7261";
     hash = "sha256-wt6FMQC57FMHHed+tJ2w+b/x/tswfmRM3WRBBKyufHg=";
     fetchSubmodules = true;
+  };
+
+  boost = fetchurl {
+    url = "https://boostorg.jfrog.io/artifactory/main/release/1.74.0/source/boost_1_74_0.tar.gz";
+    hash = "sha256-r/8205KIUSC8rAeRSMF30fb3cw7D1HIzqlGwr6TblKU=";
   };
 
   gtest = fetchurl {
@@ -66,16 +117,8 @@ let
     url = "https://wrapdb.mesonbuild.com/v1/projects/gtest/1.8.1/1/get_zip";
     hash = "sha256-959f1G4JUHs/LgmlHqbrIAIO/+VDM19a7lnzDMjRWAU=";
   };
-
-  vapoursynth = fetchFromGitHub {
-    owner = "vapoursynth";
-    repo = "vapoursynth";
-    rev = "R59";
-    hash = "sha256-6w7GSC5ZNIhLpulni4sKq0OvuxHlTJRilBFGH5PQW8U=";
-    fetchSubmodules = true;
-  };
-
-in stdenv.mkDerivation (finalAttrs: {
+in
+stdenv.mkDerivation (finalAttrs: {
   pname = "aegisub";
   version = "11";
 
@@ -86,8 +129,16 @@ in stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-yEXDwne+wros0WjOwQbvMIXk0UXV5TOoV/72K12vi/c=";
   };
 
-  nativeBuildInputs =
-    [ meson cmake lua ninja pkg-config intltool python3 gettext ];
+  nativeBuildInputs = [
+    meson
+    cmake
+    lua
+    ninja
+    pkg-config
+    intltool
+    python3
+    gettext
+  ];
 
   buildInputs = [
     dav1d
@@ -110,21 +161,22 @@ in stdenv.mkDerivation (finalAttrs: {
     nasm
     wxGTK31
     zlib
-  ] ++ lib.optionals alsaSupport [ alsa-lib ]
-    ++ lib.optionals openalSupport [ openal ]
-    ++ lib.optionals portaudioSupport [ portaudio ]
-    ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
-    ++ lib.optionals spellcheckSupport [ hunspell ]
-    ++ lib.optionals stdenv.isDarwin [
-      AppKit
-      Carbon
-      Cocoa
-      CoreFoundation
-      CoreText
-      IOKit
-      OpenAL
-      QuartzCore
-    ];
+  ]
+  ++ lib.optionals alsaSupport [ alsa-lib ]
+  ++ lib.optionals openalSupport [ openal ]
+  ++ lib.optionals portaudioSupport [ portaudio ]
+  ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
+  ++ lib.optionals spellcheckSupport [ hunspell ]
+  ++ lib.optionals stdenv.isDarwin [
+    AppKit
+    Carbon
+    Cocoa
+    CoreFoundation
+    CoreText
+    IOKit
+    OpenAL
+    QuartzCore
+  ];
 
   patches = [
     # Replace bestaudiosource with bestscore
@@ -170,10 +222,10 @@ in stdenv.mkDerivation (finalAttrs: {
   ];
 
   preConfigure = ''
-    cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
-    cp -r --no-preserve=mode ${ffms2} subprojects/ffms2
-    cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
     cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
+    cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
+    cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
+    cp -r --no-preserve=mode ${ffms2} subprojects/ffms2
     sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
 
     mkdir subprojects/packagecache
@@ -181,10 +233,10 @@ in stdenv.mkDerivation (finalAttrs: {
     cp -r --no-preserve=mode ${gtest_patch} subprojects/packagecache/gtest-1.8.1-1-wrap.zip
     cp -r --no-preserve=mode ${boost} subprojects/packagecache/boost_1_74_0.tar.gz
 
-    meson subprojects packagefiles --apply avisynth
     meson subprojects packagefiles --apply bestsource
-    meson subprojects packagefiles --apply ffms2
+    meson subprojects packagefiles --apply avisynth
     meson subprojects packagefiles --apply vapoursynth
+    meson subprojects packagefiles --apply ffms2
   '';
 
   meta = {
