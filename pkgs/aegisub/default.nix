@@ -11,17 +11,12 @@ alsaSupport ? stdenv.isLinux, alsa-lib, openalSupport ? true, openal
 , pulseaudioSupport ? config.pulseaudio or stdenv.isLinux, libpulseaudio
 , spellcheckSupport ? true, hunspell,
 
-darwin }:
+llvmPackages_15, darwin }:
 
 let
   # Fix https://github.com/boostorg/mpl/issues/69
-  stdenv = let
-    stdenv' = if stdenv.cc.isClang then
-      overrideLibcxx llvmPackages_15.stdenv
-    else
-      stdenv;
+  inherit (llvmPackages_15) stdenv;
 
-  in if stdenv'.isDarwin then overrideSDK stdenv' "11.0" else stdenv';
   inherit (darwin.apple_sdk.frameworks)
     AppKit Carbon Cocoa CoreFoundation CoreText IOKit OpenAL QuartzCore;
 
