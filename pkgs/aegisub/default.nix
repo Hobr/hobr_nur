@@ -33,7 +33,7 @@
   libuchardet,
   libX11,
   nasm,
-  wxGTK31,
+  wxGTK32,
   zlib,
 
   alsaSupport ? stdenv.isLinux,
@@ -159,7 +159,7 @@ stdenv.mkDerivation (finalAttrs: {
     libuchardet
     libX11
     nasm
-    wxGTK31
+    wxGTK32
     zlib
   ]
   ++ lib.optionals alsaSupport [ alsa-lib ]
