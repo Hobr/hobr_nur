@@ -99,7 +99,7 @@ let
     owner = "arch1t3cht";
     repo = "ffms2";
     rev = "f463e4cae01e57f130742ebc7594a926da9d7261";
-    hash = "sha256-wt6FMQC57FMHHed+tJ2w+b/x/tswfmRM3WRBBKyufHg=";
+    hash = "sha256-tnFoVTr0dI+Kzl/Q70pXS9FAkgf2fy+XiGV0X5Tybr4=";
     fetchSubmodules = true;
   };
 
