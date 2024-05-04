@@ -59,6 +59,7 @@ let
 
   inherit (darwin.stubs) setfile;
   inherit (darwin.apple_sdk.frameworks)
+    AGL
     Kernel
     QTKit
     AVFoundation
