@@ -55,14 +55,7 @@ let
   # Fix https://github.com/boostorg/mpl/issues/69
   inherit (llvmPackages_15) stdenv;
 
-  inherit (darwin.stubs) setfile;
   inherit (darwin.apple_sdk.frameworks)
-    Kernel
-    QTKit
-    AVFoundation
-    AVKit
-    WebKit
-
     AppKit
     Carbon
     Cocoa
@@ -107,14 +100,6 @@ let
     repo = "ffms2";
     rev = "f463e4cae01e57f130742ebc7594a926da9d7261";
     hash = "sha256-tnFoVTr0dI+Kzl/Q70pXS9FAkgf2fy+XiGV0X5Tybr4=";
-    fetchSubmodules = true;
-  };
-
-  wxWidgets = fetchFromGitHub {
-    owner = "wxWidgets";
-    repo = "wxWidgets";
-    rev = "v3.1.7";
-    hash = "sha256-9qYPatpTT28H+fz77o7/Y3YVmiK0OCsiQT5QAYe93M0=";
     fetchSubmodules = true;
   };
 
@@ -174,6 +159,7 @@ stdenv.mkDerivation (finalAttrs: {
     libuchardet
     libX11
     nasm
+    wxGTK32
     zlib
   ]
   ++ lib.optionals alsaSupport [ alsa-lib ]
@@ -182,13 +168,6 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
   ++ lib.optionals spellcheckSupport [ hunspell ]
   ++ lib.optionals stdenv.isDarwin [
-    setfile
-    Kernel
-    QTKit
-    AVFoundation
-    AVKit
-    WebKit
-
     AppKit
     Carbon
     Cocoa
@@ -197,8 +176,7 @@ stdenv.mkDerivation (finalAttrs: {
     IOKit
     OpenAL
     QuartzCore
-  ]
-  ++ lib.optionals (!stdenv.isDarwin) [ wxGTK32 ];
+  ];
 
   patches = [
     # Replace bestaudiosource with bestscore
@@ -249,6 +227,7 @@ stdenv.mkDerivation (finalAttrs: {
     cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
     cp -r --no-preserve=mode ${ffms2} subprojects/ffms2
 
+    sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
     mkdir subprojects/packagecache
     cp -r --no-preserve=mode ${gtest} subprojects/packagecache/gtest-1.8.1.zip
     cp -r --no-preserve=mode ${gtest_patch} subprojects/packagecache/gtest-1.8.1-1-wrap.zip
@@ -258,11 +237,6 @@ stdenv.mkDerivation (finalAttrs: {
     meson subprojects packagefiles --apply avisynth
     meson subprojects packagefiles --apply vapoursynth
     meson subprojects packagefiles --apply ffms2
-  ''
-  + lib.optionalString stdenv.isDarwin ''
-    sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
-    cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
-    meson subprojects packagefiles --apply wxWidgets
   '';
 
   meta = {
