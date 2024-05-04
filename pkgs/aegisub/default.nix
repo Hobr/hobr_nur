@@ -138,6 +138,7 @@ stdenv.mkDerivation (finalAttrs: {
     intltool
     python3
     gettext
+    wxGTK32
   ];
 
   buildInputs = [
