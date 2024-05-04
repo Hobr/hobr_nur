@@ -104,6 +104,14 @@ let
     fetchSubmodules = true;
   };
 
+  wxWidgets = fetchFromGitHub {
+    owner = "wxWidgets";
+    repo = "wxWidgets";
+    rev = "v3.1.7";
+    hash = "sha256-TWnTyqgm2PpTNDDY3bzVd9IhHc+MZ4H0+QjEIzTTn5A=";
+    fetchSubmodules = true;
+  };
+
   boost = fetchurl {
     url = "https://boostorg.jfrog.io/artifactory/main/release/1.74.0/source/boost_1_74_0.tar.gz";
     hash = "sha256-r/8205KIUSC8rAeRSMF30fb3cw7D1HIzqlGwr6TblKU=";
@@ -161,7 +169,6 @@ stdenv.mkDerivation (finalAttrs: {
     libuchardet
     libX11
     nasm
-    wxGTK32
     zlib
   ]
   ++ lib.optionals alsaSupport [ alsa-lib ]
@@ -179,6 +186,7 @@ stdenv.mkDerivation (finalAttrs: {
     OpenAL
     QuartzCore
   ];
+  ++ lib.optionals (!stdenv.isDarwin) [ wxGTK32 ];
 
   patches = [
     # Replace bestaudiosource with bestscore
@@ -200,11 +208,6 @@ stdenv.mkDerivation (finalAttrs: {
 
   mesonBuildType = "release";
   dontUseCmakeConfigure = true;
-
-  env = {
-    CPPFLAGS = "-I${lib.getDev wxGTK32}/include";
-    LDFLAGS = "-L${lib.getLib wxGTK32}/lib";
-  };
 
   mesonFlags = [
     "--force-fallback-for=ffms2"
@@ -248,6 +251,8 @@ stdenv.mkDerivation (finalAttrs: {
   ''
   + lib.optionalString stdenv.isDarwin ''
     sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
+    cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
+    meson subprojects packagefiles --apply wxWidgets
   '';
 
   meta = {
