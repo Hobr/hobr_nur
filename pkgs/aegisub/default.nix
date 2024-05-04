@@ -14,6 +14,7 @@
   intltool,
   python3,
   gettext,
+  wrapGAppsHook3,
 
   dav1d,
   expat,
@@ -103,6 +104,14 @@ let
     fetchSubmodules = true;
   };
 
+  wxWidgets = fetchFromGitHub {
+    owner = "wxWidgets";
+    repo = "wxWidgets";
+    rev = "v3.1.7";
+    hash = "sha256-TWnTyqgm2PpTNDDY3bzVd9IhHc+MZ4H0+QjEIzTTn5A=";
+    fetchSubmodules = true;
+  };
+
   boost = fetchurl {
     url = "https://boostorg.jfrog.io/artifactory/main/release/1.74.0/source/boost_1_74_0.tar.gz";
     hash = "sha256-r/8205KIUSC8rAeRSMF30fb3cw7D1HIzqlGwr6TblKU=";
@@ -138,7 +147,7 @@ stdenv.mkDerivation (finalAttrs: {
     intltool
     python3
     gettext
-    wxGTK32
+    wrapGAppsHook3
   ];
 
   buildInputs = [
@@ -160,7 +169,6 @@ stdenv.mkDerivation (finalAttrs: {
     libuchardet
     libX11
     nasm
-    wxGTK32
     zlib
   ]
   ++ lib.optionals alsaSupport [ alsa-lib ]
@@ -177,7 +185,8 @@ stdenv.mkDerivation (finalAttrs: {
     IOKit
     OpenAL
     QuartzCore
-  ];
+  ]
+  ++ lib.optionals (!stdenv.isDarwin) [ wxGTK32 ];
 
   patches = [
     # Replace bestaudiosource with bestscore
@@ -191,6 +200,8 @@ stdenv.mkDerivation (finalAttrs: {
     ./0002-remove-git-version.patch
     # Fix meson unable exec python respack
     ./0003-respack-unable-run.patch
+  ]
+  ++ lib.optionals stdenv.isDarwin [
     # Fix avisynth_wrap build error on MacOS
     ./0004-avisynth_wrap-mutex.patch
   ];
@@ -227,7 +238,6 @@ stdenv.mkDerivation (finalAttrs: {
     cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
     cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
     cp -r --no-preserve=mode ${ffms2} subprojects/ffms2
-    sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
 
     mkdir subprojects/packagecache
     cp -r --no-preserve=mode ${gtest} subprojects/packagecache/gtest-1.8.1.zip
@@ -238,6 +248,11 @@ stdenv.mkDerivation (finalAttrs: {
     meson subprojects packagefiles --apply avisynth
     meson subprojects packagefiles --apply vapoursynth
     meson subprojects packagefiles --apply ffms2
+  ''
+  + lib.optionalString stdenv.isDarwin ''
+    sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
+    cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
+    meson subprojects packagefiles --apply wxWidgets
   '';
 
   meta = {
