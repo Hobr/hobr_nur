@@ -185,7 +185,7 @@ stdenv.mkDerivation (finalAttrs: {
     IOKit
     OpenAL
     QuartzCore
-  ];
+  ]
   ++ lib.optionals (!stdenv.isDarwin) [ wxGTK32 ];
 
   patches = [
