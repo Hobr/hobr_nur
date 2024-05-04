@@ -47,6 +47,7 @@
   spellcheckSupport ? true,
   hunspell,
 
+  gst_all_1,
   llvmPackages_15,
   darwin
 }:
