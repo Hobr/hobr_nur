@@ -55,7 +55,13 @@ let
   # Fix https://github.com/boostorg/mpl/issues/69
   inherit (llvmPackages_15) stdenv;
 
+  inherit (darwin.stubs) setfile;
   inherit (darwin.apple_sdk.frameworks)
+    Kernel
+    QTKit
+    AVFoundation
+    AVKit
+    WebKit
     AppKit
     Carbon
     Cocoa
@@ -175,6 +181,15 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
   ++ lib.optionals spellcheckSupport [ hunspell ]
   ++ lib.optionals stdenv.isDarwin [
+    gst_all_1.gst-plugins-base
+    gst_all_1.gstreamer
+    setfile
+    Kernel
+    QTKit
+    AVFoundation
+    AVKit
+    WebKit
+
     AppKit
     Carbon
     Cocoa
@@ -206,6 +221,17 @@ stdenv.mkDerivation (finalAttrs: {
 
   mesonBuildType = "release";
   dontUseCmakeConfigure = true;
+  propagatedBuildInputs = lib.optional stdenv.isDarwin AGL;
+
+  configureFlags = lib.optionals stdenv.isDarwin [
+    "--disable-precomp-headers"
+    "--disable-monolithic"
+    "--enable-mediactrl"
+    "--enable-compat30"
+    "--enable-unicode"
+    "--with-osx_cocoa"
+    "--with-libiconv"
+  ];
 
   mesonFlags = [
     "--force-fallback-for=ffms2"
@@ -251,6 +277,19 @@ stdenv.mkDerivation (finalAttrs: {
     sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
     cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
     meson subprojects packagefiles --apply wxWidgets
+
+    substituteInPlace configure --replace \
+      'SEARCH_INCLUDE=' 'DUMMY_SEARCH_INCLUDE='
+    substituteInPlace configure --replace \
+      'SEARCH_LIB=' 'DUMMY_SEARCH_LIB='
+    substituteInPlace configure --replace \
+      /usr /no-such-path
+
+    substituteInPlace configure --replace \
+      'ac_cv_prog_SETFILE="/Developer/Tools/SetFile"' \
+      'ac_cv_prog_SETFILE="${setfile}/bin/SetFile"'
+    substituteInPlace configure --replace \
+      "-framework System" "-lSystem"
   '';
 
   meta = {
