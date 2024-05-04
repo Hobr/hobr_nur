@@ -14,7 +14,6 @@
   intltool,
   python3,
   gettext,
-  wrapGAppsHook3,
 
   dav1d,
   expat,
@@ -108,7 +107,7 @@ let
     owner = "wxWidgets";
     repo = "wxWidgets";
     rev = "v3.1.7";
-    hash = "sha256-TWnTyqgm2PpTNDDY3bzVd9IhHc+MZ4H0+QjEIzTTn5A=";
+    hash = "sha256-9qYPatpTT28H+fz77o7/Y3YVmiK0OCsiQT5QAYe93M0=";
     fetchSubmodules = true;
   };
 
@@ -147,7 +146,6 @@ stdenv.mkDerivation (finalAttrs: {
     intltool
     python3
     gettext
-    wrapGAppsHook3
   ];
 
   buildInputs = [
