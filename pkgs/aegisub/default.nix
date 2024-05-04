@@ -48,6 +48,7 @@
   hunspell,
 
   gst_all_1,
+  AGL,
   llvmPackages_15,
   darwin
 }:
