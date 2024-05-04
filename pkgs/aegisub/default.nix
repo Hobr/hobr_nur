@@ -182,17 +182,18 @@ stdenv.mkDerivation (finalAttrs: {
     # Replace bestaudiosource with bestscore
     (fetchpatch {
       name = "0001-bas-to-bs.patch";
-      url =
-        "https://aur.archlinux.org/cgit/aur.git/plain/0001-bas-to-bs.patch?h=aegisub-arch1t3cht&id=bbbea73953858fc7bf2775a0fb92cec49afb586c";
+      url = "https://aur.archlinux.org/cgit/aur.git/plain/0001-bas-to-bs.patch?h=aegisub-arch1t3cht&id=bbbea73953858fc7bf2775a0fb92cec49afb586c";
       hash = "sha256-T0Msa8rpE3Qo++Tq6J/xdsDX9f1vVIj/b9rR/iuIGK4=";
     })
     # Fix unable to generate git_version.h
     ./0002-remove-git-version.patch
     # Fix meson unable exec python respack
     ./0003-respack-unable-run.patch
-  ]
-  # Fix avisynth_wrap build error on MacOS
-  ++ lib.optionals stdenv.isDarwin [ ./0004-avisynth_wrap-mutex.patch ];
+    # Fix avisynth_wrap build error on MacOS
+    ./0004-avisynth_wrap-mutex.patch
+    # Drop scintilla_ime.mm
+    ./0005-drop-scintilla-ime.patch
+  ];
 
   mesonBuildType = "release";
   dontUseCmakeConfigure = true;
