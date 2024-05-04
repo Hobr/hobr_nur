@@ -47,8 +47,6 @@
   spellcheckSupport ? true,
   hunspell,
 
-  gst_all_1,
-  AGL,
   llvmPackages_15,
   darwin
 }:
@@ -59,12 +57,12 @@ let
 
   inherit (darwin.stubs) setfile;
   inherit (darwin.apple_sdk.frameworks)
-    AGL
     Kernel
     QTKit
     AVFoundation
     AVKit
     WebKit
+
     AppKit
     Carbon
     Cocoa
@@ -184,8 +182,6 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
   ++ lib.optionals spellcheckSupport [ hunspell ]
   ++ lib.optionals stdenv.isDarwin [
-    gst_all_1.gst-plugins-base
-    gst_all_1.gstreamer
     setfile
     Kernel
     QTKit
@@ -217,24 +213,11 @@ stdenv.mkDerivation (finalAttrs: {
     # Fix meson unable exec python respack
     ./0003-respack-unable-run.patch
   ]
-  ++ lib.optionals stdenv.isDarwin [
-    # Fix avisynth_wrap build error on MacOS
-    ./0004-avisynth_wrap-mutex.patch
-  ];
+  # Fix avisynth_wrap build error on MacOS
+  ++ lib.optionals stdenv.isDarwin [ ./0004-avisynth_wrap-mutex.patch ];
 
   mesonBuildType = "release";
   dontUseCmakeConfigure = true;
-  propagatedBuildInputs = lib.optional stdenv.isDarwin AGL;
-
-  configureFlags = lib.optionals stdenv.isDarwin [
-    "--disable-precomp-headers"
-    "--disable-monolithic"
-    "--enable-mediactrl"
-    "--enable-compat30"
-    "--enable-unicode"
-    "--with-osx_cocoa"
-    "--with-libiconv"
-  ];
 
   mesonFlags = [
     "--force-fallback-for=ffms2"
@@ -280,19 +263,6 @@ stdenv.mkDerivation (finalAttrs: {
     sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
     cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
     meson subprojects packagefiles --apply wxWidgets
-
-    substituteInPlace configure --replace \
-      'SEARCH_INCLUDE=' 'DUMMY_SEARCH_INCLUDE='
-    substituteInPlace configure --replace \
-      'SEARCH_LIB=' 'DUMMY_SEARCH_LIB='
-    substituteInPlace configure --replace \
-      /usr /no-such-path
-
-    substituteInPlace configure --replace \
-      'ac_cv_prog_SETFILE="/Developer/Tools/SetFile"' \
-      'ac_cv_prog_SETFILE="${setfile}/bin/SetFile"'
-    substituteInPlace configure --replace \
-      "-framework System" "-lSystem"
   '';
 
   meta = {
