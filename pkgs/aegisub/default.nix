@@ -25,11 +25,9 @@
   libass,
   libGL,
   libGLU,
-  libiconv,
   libpng,
   libuchardet,
   libX11,
-  nasm,
   wxGTK32,
   zlib,
 
@@ -44,14 +42,7 @@
   spellcheckSupport ? true,
   hunspell,
 
-  useBundledWXGTK ? stdenv.isDarwin,
   gst_all_1,
-  gtk3,
-  libSM,
-  libXinerama,
-  libXtst,
-  libXxf86vm,
-  xorgproto,
   llvmPackages_15,
   darwin
 }:
@@ -169,11 +160,9 @@ stdenv.mkDerivation (finalAttrs: {
     libass
     libGL
     libGLU
-    libiconv
     libpng
     libuchardet
     libX11
-    nasm
     zlib
   ]
   ++ lib.optionals alsaSupport [ alsa-lib ]
@@ -181,6 +170,7 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optionals portaudioSupport [ portaudio ]
   ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
   ++ lib.optionals spellcheckSupport [ hunspell ]
+  ++ lib.optionals (!stdenv.isDarwin) [ wxGTK32 ]
   ++ lib.optionals stdenv.isDarwin [
     AppKit
     Carbon
@@ -190,27 +180,16 @@ stdenv.mkDerivation (finalAttrs: {
     IOKit
     OpenAL
     QuartzCore
-  ]
-  ++ lib.optionals (!useBundledWXGTK) [ wxGTK32 ]
-  ++ lib.optionals useBundledWXGTK [
+
+    # wxWidgets
     gst_all_1.gst-plugins-base
     gst_all_1.gstreamer
-  ]
-  ++ lib.optionals (useBundledWXGTK && !stdenv.isDarwin) [
-    gtk3
-    libSM
-    libXinerama
-    libXtst
-    libXxf86vm
-    xorgproto
-   ]
-  ++ lib.optionals (useBundledWXGTK && stdenv.isDarwin) [
     setfile
     Kernel
     QTKit
     AVFoundation
     AVKit
-   ];
+  ];
 
   patches = [
     # Replace bestaudiosource with bestscore
@@ -271,7 +250,7 @@ stdenv.mkDerivation (finalAttrs: {
     meson subprojects packagefiles --apply vapoursynth
     meson subprojects packagefiles --apply ffms2
   ''
-  + lib.optionalString useBundledWXGTK ''
+  + lib.optionalString stdenv.isDarwin ''
     cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
     meson subprojects packagefiles --apply wxWidgets
   '';
