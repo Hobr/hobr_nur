@@ -227,8 +227,8 @@ stdenv.mkDerivation (finalAttrs: {
     cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
     cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
     cp -r --no-preserve=mode ${ffms2} subprojects/ffms2
-
     sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
+
     mkdir subprojects/packagecache
     cp -r --no-preserve=mode ${gtest} subprojects/packagecache/gtest-1.8.1.zip
     cp -r --no-preserve=mode ${gtest_patch} subprojects/packagecache/gtest-1.8.1-1-wrap.zip
