@@ -99,7 +99,7 @@ let
   wxWidgets = fetchFromGitHub {
     owner = "wxWidgets";
     repo = "wxWidgets";
-    rev = "v3.1.4";
+    rev = "v3.1.7";
     hash = "sha256-9qYPatpTT28H+fz77o7/Y3YVmiK0OCsiQT5QAYe93M0=";
     fetchSubmodules = true;
   };
