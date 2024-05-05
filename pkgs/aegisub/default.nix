@@ -240,6 +240,11 @@ stdenv.mkDerivation (finalAttrs: {
     meson subprojects packagefiles --apply ffms2
   '';
 
+  doCheck = true;
+  checkPhase = ''
+      meson test --verbose "gtest main" --print-errorlogs
+  '';
+
   meta = {
     homepage = "https://github.com/arch1t3cht/Aegisub";
     description = "An advanced subtitle editor; arch1t3cht's fork";
