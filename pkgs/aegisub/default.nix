@@ -16,13 +16,10 @@
   gettext,
 
   dav1d,
-  expat,
   ffmpeg,
   fftw,
   freetype,
   fontconfig,
-  fribidi,
-  harfbuzz,
   icu,
   jansson,
   libass,
@@ -47,6 +44,7 @@
   spellcheckSupport ? true,
   hunspell,
 
+  gst_all_1,
   llvmPackages_15,
   darwin
 }:
@@ -55,6 +53,7 @@ let
   # Fix https://github.com/boostorg/mpl/issues/69
   inherit (llvmPackages_15) stdenv;
 
+  inherit (darwin.stubs) setfile;
   inherit (darwin.apple_sdk.frameworks)
     AppKit
     Carbon
@@ -63,7 +62,12 @@ let
     CoreText
     IOKit
     OpenAL
-    QuartzCore;
+    QuartzCore
+    Kernel
+    QTKit
+    AVFoundation
+    AVKit
+    WebKit;
 
   lua = luajit.override {
     enable52Compat = true;
@@ -92,6 +96,14 @@ let
     repo = "AviSynthPlus";
     rev = "v3.7.2";
     hash = "sha256-PNIrDRJNKWEBPEKlCq0nE6UW0prVswE6mW+Fi4ROTAc=";
+    fetchSubmodules = true;
+  };
+
+  wxWidgets = fetchFromGitHub {
+    owner = "wxWidgets";
+    repo = "wxWidgets";
+    rev = "v3.1.4";
+    hash = "sha256-9qYPatpTT28H+fz77o7/Y3YVmiK0OCsiQT5QAYe93M0=";
     fetchSubmodules = true;
   };
 
@@ -142,13 +154,10 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs = [
     dav1d
-    expat
     ffmpeg
     fftw
     freetype
     fontconfig
-    fribidi
-    harfbuzz
     icu
     jansson
     libass
@@ -162,12 +171,14 @@ stdenv.mkDerivation (finalAttrs: {
     wxGTK32
     zlib
   ]
+  ++ lib.optionals (!stdenv.isDarwin) [ wxGTK32 ]
   ++ lib.optionals alsaSupport [ alsa-lib ]
   ++ lib.optionals openalSupport [ openal ]
   ++ lib.optionals portaudioSupport [ portaudio ]
   ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
   ++ lib.optionals spellcheckSupport [ hunspell ]
   ++ lib.optionals stdenv.isDarwin [
+    setfile
     AppKit
     Carbon
     Cocoa
@@ -176,6 +187,15 @@ stdenv.mkDerivation (finalAttrs: {
     IOKit
     OpenAL
     QuartzCore
+
+    # wxWidgets
+    gst_all_1.gst-plugins-base
+    gst_all_1.gstreamer
+    Kernel
+    QTKit
+    AVFoundation
+    AVKit
+    WebKit
   ];
 
   patches = [
@@ -236,6 +256,10 @@ stdenv.mkDerivation (finalAttrs: {
     meson subprojects packagefiles --apply avisynth
     meson subprojects packagefiles --apply vapoursynth
     meson subprojects packagefiles --apply ffms2
+  ''
+  + lib.optionalString stdenv.isDarwin ''
+    cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
+    meson subprojects packagefiles --apply wxWidgets
   '';
 
   meta = {
