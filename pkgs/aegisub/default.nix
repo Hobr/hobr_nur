@@ -191,8 +191,6 @@ stdenv.mkDerivation (finalAttrs: {
     ./0003-respack-unable-run.patch
     # Fix avisynth_wrap build error on MacOS
     ./0004-avisynth_wrap-mutex.patch
-    # Drop scintilla_ime.mm
-    ./0005-drop-scintilla-ime.patch
   ];
 
   mesonBuildType = "release";
