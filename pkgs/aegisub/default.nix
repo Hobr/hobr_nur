@@ -44,7 +44,14 @@
   spellcheckSupport ? true,
   hunspell,
 
+  useBundledWXGTK ? stdenv.isDarwin,
   gst_all_1,
+  gtk3,
+  libSM,
+  libXinerama,
+  libXtst,
+  libXxf86vm,
+  xorgproto,
   llvmPackages_15,
   darwin
 }:
@@ -66,8 +73,7 @@ let
     Kernel
     QTKit
     AVFoundation
-    AVKit
-    WebKit;
+    AVKit;
 
   lua = luajit.override {
     enable52Compat = true;
@@ -168,17 +174,14 @@ stdenv.mkDerivation (finalAttrs: {
     libuchardet
     libX11
     nasm
-    wxGTK32
     zlib
   ]
-  ++ lib.optionals (!stdenv.isDarwin) [ wxGTK32 ]
   ++ lib.optionals alsaSupport [ alsa-lib ]
   ++ lib.optionals openalSupport [ openal ]
   ++ lib.optionals portaudioSupport [ portaudio ]
   ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
   ++ lib.optionals spellcheckSupport [ hunspell ]
   ++ lib.optionals stdenv.isDarwin [
-    setfile
     AppKit
     Carbon
     Cocoa
@@ -187,16 +190,27 @@ stdenv.mkDerivation (finalAttrs: {
     IOKit
     OpenAL
     QuartzCore
-
-    # wxWidgets
+  ]
+  ++ lib.optionals (!useBundledWXGTK) [ wxGTK32 ]
+  ++ lib.optionals useBundledWXGTK [
     gst_all_1.gst-plugins-base
     gst_all_1.gstreamer
+  ]
+  ++ lib.optionals (useBundledWXGTK && !stdenv.isDarwin) [
+    gtk3
+    libSM
+    libXinerama
+    libXtst
+    libXxf86vm
+    xorgproto
+   ]
+  ++ lib.optionals (useBundledWXGTK && stdenv.isDarwin) [
+    setfile
     Kernel
     QTKit
     AVFoundation
     AVKit
-    WebKit
-  ];
+   ];
 
   patches = [
     # Replace bestaudiosource with bestscore
@@ -257,7 +271,7 @@ stdenv.mkDerivation (finalAttrs: {
     meson subprojects packagefiles --apply vapoursynth
     meson subprojects packagefiles --apply ffms2
   ''
-  + lib.optionalString stdenv.isDarwin ''
+  + lib.optionalString useBundledWXGTK ''
     cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
     meson subprojects packagefiles --apply wxWidgets
   '';
