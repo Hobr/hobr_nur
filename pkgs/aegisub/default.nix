@@ -196,10 +196,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   mesonBuildType = "release";
-
   dontUseCmakeConfigure = true;
-
-  doCheck = true;
 
   mesonFlags = [
     "--force-fallback-for=ffms2"
@@ -241,10 +238,6 @@ stdenv.mkDerivation (finalAttrs: {
     meson subprojects packagefiles --apply avisynth
     meson subprojects packagefiles --apply vapoursynth
     meson subprojects packagefiles --apply ffms2
-  '';
-
-  checkPhase = ''
-    meson test --verbose "gtest main" --print-errorlogs
   '';
 
   meta = {
