@@ -53,6 +53,8 @@ let
 
   inherit (darwin.stubs) setfile;
   inherit (darwin.apple_sdk.frameworks)
+    AGL
+    OpenGL
     AppKit
     Carbon
     Cocoa
@@ -137,6 +139,8 @@ stdenv.mkDerivation (finalAttrs: {
     rev = "feature_${finalAttrs.version}";
     hash = "sha256-yEXDwne+wros0WjOwQbvMIXk0UXV5TOoV/72K12vi/c=";
   };
+
+  propagatedBuildInputs = lib.optional stdenv.isDarwin AGL;
 
   nativeBuildInputs = [
     meson
@@ -252,6 +256,17 @@ stdenv.mkDerivation (finalAttrs: {
   ''
   + lib.optionalString stdenv.isDarwin ''
     cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
+    substituteInPlace subprojects/wxWidgets/configure --replace \
+      'SEARCH_INCLUDE=' 'DUMMY_SEARCH_INCLUDE='
+    substituteInPlace subprojects/wxWidgets/configure --replace \
+      'SEARCH_LIB=' 'DUMMY_SEARCH_LIB='
+    substituteInPlace subprojects/wxWidgets/configure --replace \
+      /usr /no-such-path
+    substituteInPlace subprojects/wxWidgets/configure --replace \
+      'ac_cv_prog_SETFILE="/Developer/Tools/SetFile"' \
+      'ac_cv_prog_SETFILE="${setfile}/bin/SetFile"'
+    substituteInPlace subprojects/wxWidgets/configure --replace \
+      "-framework System" "-lSystem"
     meson subprojects packagefiles --apply wxWidgets
   '';
 
