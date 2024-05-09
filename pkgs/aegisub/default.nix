@@ -44,7 +44,7 @@
 
   gst_all_1,
   llvmPackages_15,
-  darwin
+  darwin,
 }:
 
 let
@@ -66,11 +66,16 @@ let
     Kernel
     QTKit
     AVFoundation
-    AVKit;
+    AVKit
+    ;
 
   lua = luajit.override {
     enable52Compat = true;
-    packageOverrides = ps: with ps; [ luafilesystem moonscript ];
+    packageOverrides =
+      ps: with ps; [
+        luafilesystem
+        moonscript
+      ];
   };
 
   # from subprojects folder
@@ -153,47 +158,48 @@ stdenv.mkDerivation (finalAttrs: {
     gettext
   ];
 
-  buildInputs = [
-    dav1d
-    ffmpeg
-    fftw
-    freetype
-    fontconfig
-    icu
-    jansson
-    libass
-    libGL
-    libGLU
-    libpng
-    libuchardet
-    libX11
-    zlib
-  ]
-  ++ lib.optionals alsaSupport [ alsa-lib ]
-  ++ lib.optionals openalSupport [ openal ]
-  ++ lib.optionals portaudioSupport [ portaudio ]
-  ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
-  ++ lib.optionals spellcheckSupport [ hunspell ]
-  ++ lib.optionals (!stdenv.isDarwin) [ wxGTK32 ]
-  ++ lib.optionals stdenv.isDarwin [
-    AppKit
-    Carbon
-    Cocoa
-    CoreFoundation
-    CoreText
-    IOKit
-    OpenAL
-    QuartzCore
+  buildInputs =
+    [
+      dav1d
+      ffmpeg
+      fftw
+      freetype
+      fontconfig
+      icu
+      jansson
+      libass
+      libGL
+      libGLU
+      libpng
+      libuchardet
+      libX11
+      zlib
+    ]
+    ++ lib.optionals alsaSupport [ alsa-lib ]
+    ++ lib.optionals openalSupport [ openal ]
+    ++ lib.optionals portaudioSupport [ portaudio ]
+    ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
+    ++ lib.optionals spellcheckSupport [ hunspell ]
+    ++ lib.optionals (!stdenv.isDarwin) [ wxGTK32 ]
+    ++ lib.optionals stdenv.isDarwin [
+      AppKit
+      Carbon
+      Cocoa
+      CoreFoundation
+      CoreText
+      IOKit
+      OpenAL
+      QuartzCore
 
-    # wxWidgets
-    gst_all_1.gst-plugins-base
-    gst_all_1.gstreamer
-    setfile
-    Kernel
-    QTKit
-    AVFoundation
-    AVKit
-  ];
+      # wxWidgets
+      gst_all_1.gst-plugins-base
+      gst_all_1.gstreamer
+      setfile
+      Kernel
+      QTKit
+      AVFoundation
+      AVKit
+    ];
 
   patches = [
     # Replace bestaudiosource with bestscore
@@ -237,38 +243,39 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.mesonEnable "hunspell" spellcheckSupport)
   ];
 
-  preConfigure = ''
-    cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
-    cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
-    cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
-    cp -r --no-preserve=mode ${ffms2} subprojects/ffms2
-    sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
+  preConfigure =
+    ''
+      cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
+      cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
+      cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
+      cp -r --no-preserve=mode ${ffms2} subprojects/ffms2
+      sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
 
-    mkdir subprojects/packagecache
-    cp -r --no-preserve=mode ${gtest} subprojects/packagecache/gtest-1.8.1.zip
-    cp -r --no-preserve=mode ${gtest_patch} subprojects/packagecache/gtest-1.8.1-1-wrap.zip
-    cp -r --no-preserve=mode ${boost} subprojects/packagecache/boost_1_74_0.tar.gz
+      mkdir subprojects/packagecache
+      cp -r --no-preserve=mode ${gtest} subprojects/packagecache/gtest-1.8.1.zip
+      cp -r --no-preserve=mode ${gtest_patch} subprojects/packagecache/gtest-1.8.1-1-wrap.zip
+      cp -r --no-preserve=mode ${boost} subprojects/packagecache/boost_1_74_0.tar.gz
 
-    meson subprojects packagefiles --apply bestsource
-    meson subprojects packagefiles --apply avisynth
-    meson subprojects packagefiles --apply vapoursynth
-    meson subprojects packagefiles --apply ffms2
-  ''
-  + lib.optionalString stdenv.isDarwin ''
-    cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
-    substituteInPlace subprojects/wxWidgets/configure --replace \
-      'SEARCH_INCLUDE=' 'DUMMY_SEARCH_INCLUDE='
-    substituteInPlace subprojects/wxWidgets/configure --replace \
-      'SEARCH_LIB=' 'DUMMY_SEARCH_LIB='
-    substituteInPlace subprojects/wxWidgets/configure --replace \
-      /usr /no-such-path
-    substituteInPlace subprojects/wxWidgets/configure --replace \
-      'ac_cv_prog_SETFILE="/Developer/Tools/SetFile"' \
-      'ac_cv_prog_SETFILE="${setfile}/bin/SetFile"'
-    substituteInPlace subprojects/wxWidgets/configure --replace \
-      "-framework System" "-lSystem"
-    meson subprojects packagefiles --apply wxWidgets
-  '';
+      meson subprojects packagefiles --apply bestsource
+      meson subprojects packagefiles --apply avisynth
+      meson subprojects packagefiles --apply vapoursynth
+      meson subprojects packagefiles --apply ffms2
+    ''
+    + lib.optionalString stdenv.isDarwin ''
+      cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
+      substituteInPlace subprojects/wxWidgets/configure --replace \
+        'SEARCH_INCLUDE=' 'DUMMY_SEARCH_INCLUDE='
+      substituteInPlace subprojects/wxWidgets/configure --replace \
+        'SEARCH_LIB=' 'DUMMY_SEARCH_LIB='
+      substituteInPlace subprojects/wxWidgets/configure --replace \
+        /usr /no-such-path
+      substituteInPlace subprojects/wxWidgets/configure --replace \
+        'ac_cv_prog_SETFILE="/Developer/Tools/SetFile"' \
+        'ac_cv_prog_SETFILE="${setfile}/bin/SetFile"'
+      substituteInPlace subprojects/wxWidgets/configure --replace \
+        "-framework System" "-lSystem"
+      meson subprojects packagefiles --apply wxWidgets
+    '';
 
   meta = {
     homepage = "https://github.com/arch1t3cht/Aegisub";
