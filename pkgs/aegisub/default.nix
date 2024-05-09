@@ -48,13 +48,10 @@
 }:
 
 let
-  # Fix https://github.com/boostorg/mpl/issues/69
   inherit (llvmPackages_15) stdenv;
 
   inherit (darwin.stubs) setfile;
   inherit (darwin.apple_sdk.frameworks)
-    AGL
-    OpenGL
     AppKit
     Carbon
     Cocoa
@@ -63,6 +60,9 @@ let
     IOKit
     OpenAL
     QuartzCore
+    # wxWidgets
+    AGL
+    OpenGL
     Kernel
     QTKit
     AVFoundation
