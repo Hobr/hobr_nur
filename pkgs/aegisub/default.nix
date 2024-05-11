@@ -217,7 +217,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   mesonBuildType = "release";
-  dontUseCmakeConfigure = true;
+  # dontUseCmakeConfigure = true;
 
   mesonFlags = [
     "--force-fallback-for=ffms2"
@@ -263,17 +263,6 @@ stdenv.mkDerivation (finalAttrs: {
     ''
     + lib.optionalString stdenv.isDarwin ''
       cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
-      substituteInPlace subprojects/wxWidgets/configure --replace \
-        'SEARCH_INCLUDE=' 'DUMMY_SEARCH_INCLUDE='
-      substituteInPlace subprojects/wxWidgets/configure --replace \
-        'SEARCH_LIB=' 'DUMMY_SEARCH_LIB='
-      substituteInPlace subprojects/wxWidgets/configure --replace \
-        /usr /no-such-path
-      substituteInPlace subprojects/wxWidgets/configure --replace \
-        'ac_cv_prog_SETFILE="/Developer/Tools/SetFile"' \
-        'ac_cv_prog_SETFILE="${setfile}/bin/SetFile"'
-      substituteInPlace subprojects/wxWidgets/configure --replace \
-        "-framework System" "-lSystem"
       meson subprojects packagefiles --apply wxWidgets
     '';
 
