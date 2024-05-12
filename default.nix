@@ -9,8 +9,8 @@
 
   aegisub = pkgs.callPackage ./pkgs/aegisub { };
   rime-ice = pkgs.callPackage ./pkgs/rime-ice { };
-  ultimatevocalremovergui= pkgs.callPackage ./pkgs/ultimatevocalremovergui { };
-  atopile = pkgs.callPackage ./pkgs/atopile { };
+  # ultimatevocalremovergui= pkgs.callPackage ./pkgs/ultimatevocalremovergui { };
+  # atopile = pkgs.callPackage ./pkgs/atopile { };
   # storyboarder = pkgs.callPackage ./pkgs/storyboarder { };
   # paperlib = pkgs.callPackage ./pkgs/paperlib { };
   # liteloaderqqnt = pkgs.callPackage ./pkgs/liteloaderqqnt { };
