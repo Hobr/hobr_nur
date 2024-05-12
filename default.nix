@@ -9,6 +9,8 @@
 
   aegisub = pkgs.callPackage ./pkgs/aegisub { };
   rime-ice = pkgs.callPackage ./pkgs/rime-ice { };
+  ultimatevocalremovergui= pkgs.callPackage ./pkgs/ultimatevocalremovergui { };
+  atopile = pkgs.callPackage ./pkgs/atopile { };
   # rife-ncnn-vulkan = pkgs.callPackage ./pkgs/rife-ncnn-vulkan { };
   # real-esrgan = pkgs.callPackage ./pkgs/real-esrgan { };
 }
