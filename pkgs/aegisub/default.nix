@@ -275,6 +275,7 @@ stdenv.mkDerivation (finalAttrs: {
         'ac_cv_prog_SETFILE="${setfile}/bin/SetFile"'
       substituteInPlace subprojects/wxWidgets/configure --replace \
         "-framework System" "-lSystem"
+      sed -i '17i\#include "thread.h"' subprojects/wxWidgets/include/wx/thrimpl.cpp
       meson subprojects packagefiles --apply wxWidgets
     '';
 
