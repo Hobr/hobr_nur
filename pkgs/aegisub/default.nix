@@ -276,7 +276,6 @@ stdenv.mkDerivation (finalAttrs: {
       substituteInPlace subprojects/wxWidgets/configure --replace \
         "-framework System" "-lSystem"
 
-      sed -i '18i\#define wxUSE_THREADS 1' subprojects/wxWidgets/include/wx/thrimpl.cpp
       sed -i '17i\#include "thread.h"' subprojects/wxWidgets/include/wx/thrimpl.cpp
 
       meson subprojects packagefiles --apply wxWidgets
