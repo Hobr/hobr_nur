@@ -24,4 +24,5 @@
   # waifu2x-ncnn-vulkan = pkgs.callPackage ./pkgs/waifu2x-ncnn-vulkan { };
   # terminalizer = pkgs.callPackage ./pkgs/terminalizer { };
   # howdy = pkgs.callPackage ./pkgs/howdy { };
+  # o3de = pkgs.callPackage ./pkgs/o3de { };
 }
