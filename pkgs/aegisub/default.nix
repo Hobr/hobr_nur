@@ -146,8 +146,6 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-yEXDwne+wros0WjOwQbvMIXk0UXV5TOoV/72K12vi/c=";
   };
 
-  propagatedBuildInputs = lib.optional stdenv.isDarwin AGL;
-
   nativeBuildInputs = [
     meson
     cmake
