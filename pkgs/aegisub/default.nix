@@ -16,6 +16,7 @@
   gettext,
 
   dav1d,
+  expat,
   ffmpeg,
   fftw,
   freetype,
@@ -161,6 +162,7 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs =
     [
       dav1d
+      expat
       ffmpeg
       fftw
       freetype
