@@ -8,6 +8,7 @@
   overlays = import ./overlays;
 
   aegisub = pkgs.callPackage ./pkgs/aegisub { };
+
   rime-ice = pkgs.callPackage ./pkgs/rime-ice { };
 
   atopile = pkgs.callPackage ./pkgs/atopile {
@@ -27,6 +28,7 @@
   quart-schema = pkgs.callPackage ./pkgs/quart-schema { };
 
   easyeda2kicad = pkgs.callPackage ./pkgs/easyeda2kicad { };
+
   # ultimatevocalremovergui = pkgs.callPackage ./pkgs/ultimatevocalremovergui { };
   # storyboarder = pkgs.callPackage ./pkgs/storyboarder { };
   # paperlib = pkgs.callPackage ./pkgs/paperlib { };
