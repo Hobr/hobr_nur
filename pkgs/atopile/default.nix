@@ -80,6 +80,8 @@ python3.pkgs.buildPythonApplication rec {
 
   pythonImportsCheck = [ "atopile" ];
 
+  env.SETUPTOOLS_SCM_PRETEND_VERSION = version;
+
   meta = with lib; {
     description = "Design circuit boards with code! Get software-like design reuse, validation, version control and collaboration in hardware; starting with electronics";
     homepage = "https://github.com/atopile/atopile";
