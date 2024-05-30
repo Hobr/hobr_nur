@@ -95,7 +95,7 @@ python.pkgs.buildPythonApplication rec {
     description = "GUI for a Vocal Remover that uses Deep Neural Networks";
     homepage = "https://github.com/Anjok07/ultimatevocalremovergui";
     license = licenses.free;
-    maintainers = with maintainers; [ hobr ];
+    maintainers = with maintainers; [ ];
     mainProgram = "ultimatevocalremovergui";
     platforms = platforms.all;
   };

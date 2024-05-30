@@ -9,8 +9,25 @@
 
   aegisub = pkgs.callPackage ./pkgs/aegisub { };
   rime-ice = pkgs.callPackage ./pkgs/rime-ice { };
-  ultimatevocalremovergui = pkgs.callPackage ./pkgs/ultimatevocalremovergui { };
-  # atopile = pkgs.callPackage ./pkgs/atopile { };
+
+  atopile = pkgs.callPackage ./pkgs/atopile {
+    case-converter = pkgs.callPackage ./pkgs/case-converter { };
+    eseries = pkgs.callPackage ./pkgs/eseries {
+      docopt-subcommands = pkgs.callPackage ./pkgs/docopt-subcommands { };
+    };
+    quart-schema = pkgs.callPackage ./pkgs/quart-schema { };
+    easyeda2ato = pkgs.callPackage ./pkgs/easyeda2ato { };
+  };
+  easyeda2ato = pkgs.callPackage ./pkgs/easyeda2ato { };
+  case-converter = pkgs.callPackage ./pkgs/case-converter { };
+  eseries = pkgs.callPackage ./pkgs/eseries {
+    docopt-subcommands = pkgs.callPackage ./pkgs/docopt-subcommands { };
+  };
+  docopt-subcommands = pkgs.callPackage ./pkgs/docopt-subcommands { };
+  quart-schema = pkgs.callPackage ./pkgs/quart-schema { };
+
+  easyeda2kicad = pkgs.callPackage ./pkgs/easyeda2kicad { };
+  # ultimatevocalremovergui = pkgs.callPackage ./pkgs/ultimatevocalremovergui { };
   # storyboarder = pkgs.callPackage ./pkgs/storyboarder { };
   # paperlib = pkgs.callPackage ./pkgs/paperlib { };
   # liteloaderqqnt = pkgs.callPackage ./pkgs/liteloaderqqnt { };
