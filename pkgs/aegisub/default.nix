@@ -21,6 +21,7 @@
   fftw,
   freetype,
   fontconfig,
+  iconv,
   icu,
   jansson,
   libass,
@@ -165,6 +166,7 @@ stdenv.mkDerivation (finalAttrs: {
       fftw
       freetype
       fontconfig
+      iconv
       icu
       jansson
       libass
