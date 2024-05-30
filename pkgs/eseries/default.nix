@@ -4,9 +4,7 @@
   fetchFromGitHub,
   docopt-subcommands,
 }:
-
-with python3.pkgs;
-buildPythonApplication rec {
+python3.pkgs.buildPythonApplication rec {
   pname = "eseries";
   version = "1.2.1";
   pyproject = true;
@@ -18,12 +16,12 @@ buildPythonApplication rec {
     hash = "sha256-PgJvkvZOFGPPyAK1PAXHd57xfam9TviB+2hCz1702nY=";
   };
 
-  nativeBuildInputs = [
+  nativeBuildInputs = with python3.pkgs; [
     setuptools
     wheel
   ];
 
-  propagatedBuildInputs = [
+  propagatedBuildInputs = with python3.pkgs; [
     future
     docopt-subcommands
   ];

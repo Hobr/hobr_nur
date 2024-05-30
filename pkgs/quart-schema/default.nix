@@ -3,9 +3,7 @@
   python3,
   fetchFromGitHub,
 }:
-
-with python3.pkgs;
-buildPythonApplication rec {
+python3.pkgs.buildPythonApplication rec {
   pname = "quart-schema";
   version = "0.20.0";
   pyproject = true;
@@ -17,15 +15,15 @@ buildPythonApplication rec {
     hash = "sha256-3sNxhRvxjfB/86tl+QCyz95TZ69Akm+cvSe6mYbDGSg=";
   };
 
-  nativeBuildInputs = [ poetry-core ];
+  nativeBuildInputs = [ python3.pkgs.poetry-core ];
 
-  propagatedBuildInputs = [
+  propagatedBuildInputs = with python3.pkgs; [
     pyhumps
     quart
     typing-extensions
   ];
 
-  passthru.optional-dependencies = {
+  passthru.optional-dependencies = with python3.pkgs; {
     docs = [
       pydata_sphinx_theme
       sphinx-tabs

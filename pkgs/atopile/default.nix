@@ -7,8 +7,7 @@
   quart-schema,
   easyeda2ato,
 }:
-with python3.pkgs;
-buildPythonApplication rec {
+python3.pkgs.buildPythonApplication rec {
   pname = "atopile";
   version = "0.2.53";
   pyproject = true;
@@ -20,12 +19,12 @@ buildPythonApplication rec {
     hash = "sha256-W2/JupgaO7GX31fv6U9Sm3gTKAvSxlL4Q9jLpD55oB4=";
   };
 
-  nativeBuildInputs = [
+  nativeBuildInputs = with python3.pkgs; [
     hatch-vcs
     hatchling
   ];
 
-  propagatedBuildInputs = [
+  propagatedBuildInputs = with python3.pkgs; [
     antlr4-python3-runtime
     attrs
     case-converter
@@ -58,7 +57,7 @@ buildPythonApplication rec {
     pyyaml
   ];
 
-  passthru.optional-dependencies = {
+  passthru.optional-dependencies = with python3.pkgs; {
     dev = [
       antlr4-tools
       black

@@ -3,8 +3,7 @@
   python3,
   fetchFromGitHub,
 }:
-with python3.pkgs;
-buildPythonApplication rec {
+python3.pkgs.buildPythonApplication rec {
   pname = "easyeda2kicad";
   version = "0.6.5";
   pyproject = true;
@@ -16,12 +15,12 @@ buildPythonApplication rec {
     hash = "sha256-yHwYYWX6gmzQcp/bNq5ouMYkO5oSsAOIhvyyZgdlCRs=";
   };
 
-  nativeBuildInputs = [
+  nativeBuildInputs = with python3.pkgs; [
     setuptools
     wheel
   ];
 
-  propagatedBuildInputs = [
+  propagatedBuildInputs = with python3.pkgs; [
     pydantic
     requests
   ];

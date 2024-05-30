@@ -3,9 +3,7 @@
   python3,
   fetchFromGitHub,
 }:
-
-with python3.pkgs;
-buildPythonApplication rec {
+python3.pkgs.buildPythonApplication rec {
   pname = "case-converter";
   version = "1.1.0";
   pyproject = true;
@@ -17,7 +15,7 @@ buildPythonApplication rec {
     hash = "sha256-iu6M+ZdzQGcYftRuW5jmPChQzs3Lots3Iu8I0rphdGk=";
   };
 
-  nativeBuildInputs = [
+  nativeBuildInputs = with python3.pkgs; [
     setuptools
     wheel
   ];

@@ -3,9 +3,7 @@
   python3,
   fetchPypi,
 }:
-
-with python3.pkgs;
-buildPythonApplication rec {
+python3.pkgs.buildPythonApplication rec {
   pname = "easyeda2ato";
   version = "0.2.7";
   pyproject = true;
@@ -15,19 +13,15 @@ buildPythonApplication rec {
     hash = "sha256-bHhBN+h9Vx9Q4wZVKxMzkEEXzV7hKoQz8i+JpkSFsYA=";
   };
 
-  nativeBuildInputs = [
+  nativeBuildInputs = with python3.pkgs; [
     setuptools
     wheel
   ];
 
-  propagatedBuildInputs = [
+  propagatedBuildInputs = with python3.pkgs; [
     pydantic
     requests
   ];
-
-  passthru.optional-dependencies = {
-    dev = [ pre-commit ];
-  };
 
   pythonImportsCheck = [ "easyeda2kicad" ];
 
