@@ -9,7 +9,6 @@
         "aarch64-linux"
         "i686-linux"
         "x86_64-darwin"
-        "aarch64-darwin"
         "armv7l-linux"
         "armv6l-linux"
       ];
