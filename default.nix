@@ -29,6 +29,8 @@
 
   easyeda2kicad = pkgs.callPackage ./pkgs/easyeda2kicad { };
 
+  # swingmusic = pkgs.callPackage ./pkgs/swingmusic { };
+
   # ultimatevocalremovergui = pkgs.callPackage ./pkgs/ultimatevocalremovergui { };
   # storyboarder = pkgs.callPackage ./pkgs/storyboarder { };
   # paperlib = pkgs.callPackage ./pkgs/paperlib { };
