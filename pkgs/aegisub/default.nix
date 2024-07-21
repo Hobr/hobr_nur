@@ -31,6 +31,7 @@
   libuchardet,
   libX11,
   wxGTK32,
+  hicolor-icon-theme,
   zlib,
 
   alsaSupport ? stdenv.isLinux,
@@ -182,7 +183,10 @@ stdenv.mkDerivation (finalAttrs: {
     ++ lib.optionals portaudioSupport [ portaudio ]
     ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
     ++ lib.optionals spellcheckSupport [ hunspell ]
-    ++ lib.optionals (!stdenv.isDarwin) [ wxGTK32 ]
+    ++ lib.optionals (!stdenv.isDarwin) [
+      wxGTK32
+      hicolor-icon-theme
+    ]
     ++ lib.optionals stdenv.isDarwin [
       AppKit
       Carbon
