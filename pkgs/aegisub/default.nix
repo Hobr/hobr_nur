@@ -14,6 +14,7 @@
   intltool,
   python3,
   gettext,
+  wrapGAppsHook,
 
   dav1d,
   expat,
@@ -31,7 +32,7 @@
   libuchardet,
   libX11,
   wxGTK32,
-  hicolor-icon-theme,
+  adwaita-icon-theme,
   zlib,
 
   alsaSupport ? stdenv.isLinux,
@@ -157,6 +158,7 @@ stdenv.mkDerivation (finalAttrs: {
     intltool
     python3
     gettext
+    wrapGAppsHook
   ];
 
   buildInputs =
@@ -185,7 +187,7 @@ stdenv.mkDerivation (finalAttrs: {
     ++ lib.optionals spellcheckSupport [ hunspell ]
     ++ lib.optionals (!stdenv.isDarwin) [
       wxGTK32
-      hicolor-icon-theme
+      adwaita-icon-theme
     ]
     ++ lib.optionals stdenv.isDarwin [
       AppKit
