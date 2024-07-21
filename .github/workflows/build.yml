@@ -35,7 +35,7 @@ jobs:
           - hobr
         nixPath:
           - nixpkgs=channel:nixos-unstable
-          - nixpkgs=channel:nixos-24.05
+
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
