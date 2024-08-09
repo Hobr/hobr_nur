@@ -9,14 +9,14 @@
 }:
 python3.pkgs.buildPythonApplication rec {
   pname = "atopile";
-  version = "0.2.53";
+  version = "0.2.63";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "atopile";
     repo = "atopile";
     rev = "v${version}";
-    hash = "sha256-W2/JupgaO7GX31fv6U9Sm3gTKAvSxlL4Q9jLpD55oB4=";
+    hash = "sha256-Gi+gVYjsQKdtUKEz5yQ0D1llfT9NznQjEDTS+JpnAFY=";
   };
 
   nativeBuildInputs = with python3.pkgs; [
@@ -33,6 +33,7 @@ python3.pkgs.buildPythonApplication rec {
     deepdiff
     easyeda2ato
     eseries
+    fake-useragent
     fastapi
     gitpython
     igraph
