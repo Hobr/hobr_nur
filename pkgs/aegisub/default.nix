@@ -14,7 +14,7 @@
   intltool,
   python3,
   gettext,
-  wrapGAppsHook,
+  wrapGAppsHook3,
 
   dav1d,
   expat,
@@ -158,7 +158,7 @@ stdenv.mkDerivation (finalAttrs: {
     intltool
     python3
     gettext
-    wrapGAppsHook
+    wrapGAppsHook3
   ];
 
   buildInputs =
