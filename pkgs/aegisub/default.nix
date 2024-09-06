@@ -16,6 +16,7 @@
   gettext,
   wrapGAppsHook3,
 
+  adwaita-icon-theme,
   dav1d,
   expat,
   ffmpeg,
@@ -32,7 +33,6 @@
   libuchardet,
   libX11,
   wxGTK32,
-  adwaita-icon-theme,
   zlib,
 
   alsaSupport ? stdenv.isLinux,
@@ -64,7 +64,6 @@ let
     IOKit
     OpenAL
     QuartzCore
-    # wxWidgets
     AGL
     OpenGL
     Kernel
@@ -186,8 +185,8 @@ stdenv.mkDerivation (finalAttrs: {
     ++ lib.optionals pulseaudioSupport [ libpulseaudio ]
     ++ lib.optionals spellcheckSupport [ hunspell ]
     ++ lib.optionals (!stdenv.isDarwin) [
-      wxGTK32
       adwaita-icon-theme
+      wxGTK32
     ]
     ++ lib.optionals stdenv.isDarwin [
       AppKit
@@ -251,46 +250,43 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.mesonEnable "hunspell" spellcheckSupport)
   ];
 
-  preConfigure =
-    ''
-      cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
-      cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
-      cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
-      cp -r --no-preserve=mode ${ffms2} subprojects/ffms2
-      sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
+  preConfigure = ''
+    cp -r --no-preserve=mode ${bestsource} subprojects/bestsource
+    cp -r --no-preserve=mode ${AviSynthPlus} subprojects/avisynth
+    cp -r --no-preserve=mode ${vapoursynth} subprojects/vapoursynth
+    cp -r --no-preserve=mode ${ffms2} subprojects/ffms2
+    sed -i '28i\#include <string>' subprojects/bestsource/src/videosource.h
 
-      mkdir subprojects/packagecache
-      cp -r --no-preserve=mode ${gtest} subprojects/packagecache/gtest-1.8.1.zip
-      cp -r --no-preserve=mode ${gtest_patch} subprojects/packagecache/gtest-1.8.1-1-wrap.zip
-      cp -r --no-preserve=mode ${boost} subprojects/packagecache/boost_1_74_0.tar.gz
+    mkdir subprojects/packagecache
+    cp -r --no-preserve=mode ${gtest} subprojects/packagecache/gtest-1.8.1.zip
+    cp -r --no-preserve=mode ${gtest_patch} subprojects/packagecache/gtest-1.8.1-1-wrap.zip
+    cp -r --no-preserve=mode ${boost} subprojects/packagecache/boost_1_74_0.tar.gz
 
-      meson subprojects packagefiles --apply bestsource
-      meson subprojects packagefiles --apply avisynth
-      meson subprojects packagefiles --apply vapoursynth
-      meson subprojects packagefiles --apply ffms2
-    ''
-    + lib.optionalString stdenv.isDarwin ''
-      cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
-      meson subprojects packagefiles --apply wxWidgets
-      substituteInPlace subprojects/wxWidgets/configure --replace \
-        'SEARCH_INCLUDE=' 'DUMMY_SEARCH_INCLUDE='
-      substituteInPlace subprojects/wxWidgets/configure --replace \
-        'SEARCH_LIB=' 'DUMMY_SEARCH_LIB='
-      substituteInPlace subprojects/wxWidgets/configure --replace \
-        /usr /no-such-path
-      substituteInPlace subprojects/wxWidgets/configure --replace \
-        'ac_cv_prog_SETFILE="/Developer/Tools/SetFile"' \
-        'ac_cv_prog_SETFILE="${setfile}/bin/SetFile"'
-      substituteInPlace subprojects/wxWidgets/configure --replace \
-        "-framework System" "-lSystem"
-      substituteInPlace subprojects/wxWidgets/build/cmake/files.cmake --replace \
-        "wx/thrimpl.cpp" ""
-      meson subprojects packagefiles --apply wxWidgets
-    '';
+    for project in bestsource avisynth vapoursynth ffms2; do
+      meson subprojects packagefiles --apply $project
+    done
+  '';
+
+  postPatch = lib.optionalString stdenv.isDarwin ''
+    cp -r --no-preserve=mode ${wxWidgets} subprojects/wxWidgets
+    meson subprojects packagefiles --apply wxWidgets
+
+    substituteInPlace subprojects/wxWidgets/configure \
+      --replace-fail 'SEARCH_INCLUDE=' 'DUMMY_SEARCH_INCLUDE=' \
+      --replace-fail 'SEARCH_LIB=' 'DUMMY_SEARCH_LIB='
+      --replace-fail /usr /no-such-path \
+      --replace-warn 'ac_cv_prog_SETFILE="/Developer/Tools/SetFile"' \
+        'ac_cv_prog_SETFILE="${setfile}/bin/SetFile"' \
+      --replace-fail "-framework System" "-lSystem"
+    substituteInPlace subprojects/wxWidgets/build/cmake/files.cmake \
+      --replace-fail "wx/thrimpl.cpp" ""
+
+    meson subprojects packagefiles --apply wxWidgets
+  '';
 
   meta = {
     homepage = "https://github.com/arch1t3cht/Aegisub";
-    description = "An advanced subtitle editor; arch1t3cht's fork";
+    description = "Advanced subtitle editor; arch1t3cht's fork";
     longDescription = ''
       Aegisub is a free, cross-platform open source tool for creating and
       modifying subtitles. Aegisub makes it quick and easy to time subtitles to
