@@ -1,4 +1,3 @@
-# nix-build -A mypackage
 {
   pkgs ? import <nixpkgs> { },
 }:
